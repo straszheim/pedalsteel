@@ -2,27 +2,17 @@
 
 import sys
 from curses import *
+sc = initscr()
+start_color()
+from Colors import *
+
+
 from Note import *
 from Interval import *
 from Neck import *
 
-sc = initscr()
-start_color()
 sc.border(0)
 sc.refresh()
-
-init_pair(1, COLOR_WHITE, COLOR_BLACK)
-white = color_pair(1)
-init_pair(2, COLOR_RED, COLOR_BLACK)
-red = color_pair(2)
-init_pair(3, COLOR_GREEN, COLOR_BLACK)
-green = color_pair(3)
-init_pair(4, COLOR_CYAN, COLOR_BLACK)
-cyan = color_pair(4)
-init_pair(5, COLOR_MAGENTA, COLOR_BLACK)
-magenta = color_pair(5)
-init_pair(6, COLOR_YELLOW, COLOR_BLACK)
-yellow = color_pair(6)
 
 
 nfrets = 17
@@ -32,7 +22,6 @@ yoff = 5
 fretwidth = 5
 
 chordcolors = [cyan, magenta, yellow, green]
-
 
 for f in range(nfrets):
     pass # sc.addstr(yoff-1, xoff+f*fretwidth, str(f), red)
@@ -55,15 +44,16 @@ def print_neck(tuning, emph):
     for (sn, s) in enumerate(tuning):
         # print "|",
         for fret in range(nfrets+1):
-            c = green if emph(s) else white
-            sc.addstr (sn+yoff, xoff+fret*fretwidth, str(s), c) #A_NORMAL)
-            s = +s
+            c = green if emph(s+fret) else white
+            sc.addstr (sn+yoff, xoff+fret*fretwidth, str(s+fret), c)
         
 def emph(s):
-    return s in [E,G,B]
+    return s in [E,B]
 
 try:
-    print_neck(open_g, emph)
+    n = E9_Neck()
+    n.render(sc, emph)
+
     sc.refresh()
     sc.getch()
 finally:
