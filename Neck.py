@@ -2,7 +2,7 @@ from Note import *
 
 class E9_Neck:
 
-    tuning = [Fs4, Ds4, Gs4, E4, B4, Gs3, Fs3, E3, D3, B3]
+    tuning = [Fs4, Ds4, Gs4, E4, B3, Gs3, Fs3, E3, D3, B2]
 
     nada = [0,0,0,0,0,0,0,0,0,0]
     p1   = [0,0,0,0,2,0,0,0,0,2]
@@ -21,6 +21,6 @@ class E9_Neck:
         startnote = E9_Neck.tuning[index]
         return [self.tuning[index]+i for i in range(25)]
         
-    
+        
             
         

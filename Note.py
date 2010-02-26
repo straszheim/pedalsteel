@@ -2,9 +2,11 @@
 
 import sys
 
-sharp_notes = list(enumerate(['A', 'As', 'B', 'C', 'Cs', 'D', 'Ds', 'E', 'F', 'Fs', 'G', 'Gs']))
+sharp_notes = list(enumerate(['C', 'Cs', 'D', 'Ds', 'E', 'F',
+                              'Fs', 'G', 'Gs', 'A', 'As', 'B']))
 
-flat_notes = list(enumerate(['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab']))
+flat_notes = list(enumerate(['C', 'Db', 'D', 'Eb', 'E', 'F',
+                             'Gb', 'G', 'Ab', 'A', 'Bb', 'B']))
 
 notes = flat_notes
 

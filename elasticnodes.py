@@ -67,24 +67,22 @@ class NeckWidget(QtGui.QGraphicsItem):
             painter.drawEllipse(x, y, size, size)
     
         def text(x, y, s):
-            #print s.value
             painter.setPen(Qt.darkGray)
+            font = QtGui.QFont()
+            font.setPointSize(4)
+            painter.setFont(font)
             t = unicode(s)
             t = t.replace('s', u'\u266F')
             t = t.replace('b', u'\u266D')
-            painter.drawText(QRectF(x, y, x+20, y+20), t)
+            painter.drawText(x, y, t)
 
         for (fretindex, loc) in enumerate(self.fretlocations):
-
             # line(loc, y, loc, y+ysize)
-
             if fretindex in [3,5,7,9, 12, 15, 17, 19, 21, 24]:
                 dot(loc, y-30, QtCore.Qt.blue, 5)
             if fretindex in [12,24]:
                 dot(loc, y-40, QtCore.Qt.blue, 5)
-                
             for (stringindex, yloc) in enumerate(self.stringlocations):
-                dot(loc, yloc)
                 text(loc, yloc, self.tuning[stringindex][fretindex])
                 
 class GraphWidget(QtGui.QGraphicsView):
@@ -113,6 +111,33 @@ class GraphWidget(QtGui.QGraphicsView):
         self.setWindowTitle("Pedal Steel")
         self.timerId = self.startTimer(1000)
 
+        #
+        # pedals
+        # 
+        spacing = 100
+        pedalx = 100
+        pedaly = 170
+
+        self.pedals = {}
+        pedals = self.pedals
+        for name in ['LKL', 'LKU', 'LKR', 'RKL', 'RKR']:
+            gi = QtGui.QGraphicsTextItem(name)
+            gi.setPos(pedalx, pedaly)
+            pedalx += spacing
+            pedals[name] = gi
+            scene.addItem(gi)
+
+        pedalx = 100
+        pedaly = 185
+        for name in ['A', 'B', 'C', 'D', 'E', 'F', 'G']:
+            gi = QtGui.QGraphicsTextItem(name)
+            gi.setPos(pedalx, pedaly)
+            pedalx += spacing
+            pedals[name] = gi
+            scene.addItem(gi)
+
+        
+
     def wheelEvent(self, event):
         self.scaleView(math.pow(2.0, -event.delta() / 240.0))
 
@@ -138,20 +163,22 @@ class GraphWidget(QtGui.QGraphicsView):
                 sys.exit(1)
             if t == 'b':
                 Notemodule.use_flats()
+                self.neck.update()
                 break
             if t == 's':
                 Notemodule.use_sharps()
+                self.neck.update()
                 break
             
     def keyReleaseEvent(self, event):
         print "keyReleaseEvent!"
+
 
 if __name__ == '__main__':
 
     import sys
 
     app = QtGui.QApplication(sys.argv)
-    # QtCore.qsrand(QtCore.QTime(0,0,0).secsTo(QtCore.QTime.currentTime()))
 
     widget = GraphWidget()
     widget.show()
