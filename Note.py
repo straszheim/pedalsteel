@@ -44,6 +44,16 @@ class Note:
             n.octave -= 1
         return n
 
+    def normalize(self):
+        while self.value >= 12:
+            self.value -= 12
+            if self.octave != None:
+                self.octave += 1
+        while self.value < 0:
+            self.value += 12
+            if self.octave != None:
+                self.octave -= 1
+
     def __pos__(self):
         n = Note(self.octave, self.value)
         n.value += 1;
@@ -58,19 +68,13 @@ class Note:
     def __add__(self, howmuch):
         n = Note(self.octave, self.value)
         n.value += howmuch
-        while n.value >= 12:
-            n.value -= 12
-            if n.octave != None:
-                n.octave += 1
+        n.normalize()
         return n
 
     def __sub__(self, howmuch):
         n = Note(self.octave, self.value)
         n.value -= howmuch
-        while n.value < 0:
-            n.value += 12
-            if n.octave != None:
-                n.octave -= 1
+        n.normalize()
         return n
 
     def __eq__(self, other):
@@ -80,6 +84,7 @@ class Note:
             return self.octave == other.octave and self.value == other.value
 
     def __str__(self):
+        self.normalize()
         return value2letter[self.value] + str(self.octave)
 
     def __repr__(self):

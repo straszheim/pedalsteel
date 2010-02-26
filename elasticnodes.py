@@ -43,6 +43,9 @@ class NeckWidget(QtGui.QGraphicsItem):
         for i in range(self.nstrings):
             self.stringlocations[i] = ysize * i / (self.nstrings - 1)
 
+        self.dotsize=3
+        self.dotmargin=10
+
     def type(self):
         return NeckWidget.Type
 
@@ -67,6 +70,7 @@ class NeckWidget(QtGui.QGraphicsItem):
             painter.drawEllipse(x, y, size, size)
     
         def text(x, y, s):
+            print (x,y,s)
             painter.setPen(Qt.darkGray)
             font = QtGui.QFont()
             font.setPointSize(4)
@@ -79,12 +83,30 @@ class NeckWidget(QtGui.QGraphicsItem):
         for (fretindex, loc) in enumerate(self.fretlocations):
             # line(loc, y, loc, y+ysize)
             if fretindex in [3,5,7,9, 12, 15, 17, 19, 21, 24]:
-                dot(loc, y-30, QtCore.Qt.blue, 5)
+                dot(loc, y-self.dotmargin, QtCore.Qt.blue, self.dotsize)
+                dot(loc, y+ysize+self.dotmargin, QtCore.Qt.blue, self.dotsize)
             if fretindex in [12,24]:
-                dot(loc, y-40, QtCore.Qt.blue, 5)
+                dot(loc, y-self.dotmargin-self.dotsize*2, QtCore.Qt.blue, self.dotsize)
+                dot(loc, y+ysize+self.dotmargin+self.dotsize*2, QtCore.Qt.blue, self.dotsize)
             for (stringindex, yloc) in enumerate(self.stringlocations):
                 text(loc, yloc, self.tuning[stringindex][fretindex])
                 
+class PedalWidget(QtGui.QGraphicsTextItem):
+    def __init__(self, name):
+        super(PedalWidget, self).__init__(name)
+        self.on = False
+
+    def toggle(self):
+        thisfont = self.font()
+        if self.on:
+            thisfont.setWeight(QtGui.QFont.Normal)
+        else:
+            thisfont.setWeight(QtGui.QFont.Bold)
+            
+        self.on = not self.on
+
+        self.setFont(thisfont)
+
 class GraphWidget(QtGui.QGraphicsView):
     def __init__(self):
         super(GraphWidget, self).__init__()
@@ -93,7 +115,7 @@ class GraphWidget(QtGui.QGraphicsView):
 
         scene = QtGui.QGraphicsScene(self)
         scene.setItemIndexMethod(QtGui.QGraphicsScene.NoIndex)
-        scene.setSceneRect(-50, -50, 1000, 250)
+        scene.setSceneRect(-20, -50, 800, 300)
         self.setScene(scene)
         self.setCacheMode(QtGui.QGraphicsView.CacheBackground)
         self.setViewportUpdateMode(QtGui.QGraphicsView.BoundingRectViewportUpdate)
@@ -121,7 +143,7 @@ class GraphWidget(QtGui.QGraphicsView):
         self.pedals = {}
         pedals = self.pedals
         for name in ['LKL', 'LKU', 'LKR', 'RKL', 'RKR']:
-            gi = QtGui.QGraphicsTextItem(name)
+            gi = PedalWidget(name)
             gi.setPos(pedalx, pedaly)
             pedalx += spacing
             pedals[name] = gi
@@ -129,14 +151,12 @@ class GraphWidget(QtGui.QGraphicsView):
 
         pedalx = 100
         pedaly = 185
-        for name in ['A', 'B', 'C', 'D', 'E', 'F', 'G']:
-            gi = QtGui.QGraphicsTextItem(name)
+        for name in ['P1', 'P2', 'P3']:
+            gi = PedalWidget(name)
             gi.setPos(pedalx, pedaly)
             pedalx += spacing
             pedals[name] = gi
             scene.addItem(gi)
-
-        
 
     def wheelEvent(self, event):
         self.scaleView(math.pow(2.0, -event.delta() / 240.0))
@@ -157,7 +177,18 @@ class GraphWidget(QtGui.QGraphicsView):
         print "enterEvent!"
 
     def keyPressEvent(self, event):
-        print "keyPressEvent!",
+
+        print "keyPressEvent!", event
+
+        def pedaldown(name):
+            self.neck.tuning.toggle(name)
+            self.pedals[name].toggle()
+            self.neck.update()
+
+        keymap = { '1':'P1', '2':'P2', '3':'P3',
+                   'e':'LKL', 'r':'LKU', 't':'LKR',
+                   'f':'RKL', 'g':'RKR'}
+        
         for t in [event.text()]:
             if t == 'q':
                 sys.exit(1)
@@ -169,6 +200,8 @@ class GraphWidget(QtGui.QGraphicsView):
                 Notemodule.use_sharps()
                 self.neck.update()
                 break
+            if t in keymap.keys():
+                pedaldown(keymap[str(t)])
             
     def keyReleaseEvent(self, event):
         print "keyReleaseEvent!"
