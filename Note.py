@@ -2,6 +2,33 @@
 
 import sys
 
+sharp_notes = list(enumerate(['A', 'As', 'B', 'C', 'Cs', 'D', 'Ds', 'E', 'F', 'Fs', 'G', 'Gs']))
+
+flat_notes = list(enumerate(['A', 'Bb', 'B', 'C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab']))
+
+notes = flat_notes
+
+value2flat = dict(flat_notes)
+value2sharp = dict(sharp_notes)
+
+value2letter = {}
+letter2value = {}
+
+def use_flats():
+    global value2letter, letter2value, notes
+    notes = flat_notes
+    value2letter = dict(notes)
+    letter2value = dict([(y,x) for (x,y) in notes])
+
+
+def use_sharps():
+    global value2letter, letter2value, notes
+    notes = sharp_notes
+    value2letter = dict(notes)
+    letter2value = dict([(y,x) for (x,y) in notes])
+
+use_flats()
+
 class Note:
     def __init__(self, octave, value):
         self.octave = octave
@@ -56,10 +83,6 @@ class Note:
     def __repr__(self):
         return str(self)
 
-notes = list(enumerate(['A', 'As', 'B', 'C', 'Cs', 'D', 'Ds', 'E', 'F', 'Fs', 'G', 'Gs']))
-value2letter = dict(notes)
-letter2value = dict([(y,x) for (x,y) in notes])
-
 #
 # generate notes and exec
 #
@@ -70,11 +93,11 @@ values_file.write("print 'importing values'\n")
 values_file.write("print '....>', dir()\n")
 
 print notes
-for value, letter in notes:
+for value, letter in sharp_notes + flat_notes:
     values_file.write('%s = Note(octave=None, value=%s)\n' % (letter, value))
 
 for octave in range(10):
-    for value, letter in notes:
+    for value, letter in sharp_notes + flat_notes:
         values_file.write("%s%d = Note(value=%d, octave=%d)\n" % (letter, octave, value, octave))
 
 values_file.close()

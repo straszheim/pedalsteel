@@ -1,5 +1,4 @@
 from Note import *
-from Colors import *
 
 class E9_Neck:
 
@@ -20,14 +19,8 @@ class E9_Neck:
 
     def __getitem__(self, index):
         startnote = E9_Neck.tuning[index]
-        return [self.tuning[index]+i for i in range(24)]
+        return [self.tuning[index]+i for i in range(25)]
         
-    def render(self, screen, emph):
-        for (off, s) in enumerate(self.tuning):
-            for fret in range(25):
-                c = green if emph(s+fret) else white
-                screen.addstr(off+5, 5+fret*5, str(s+fret), c)
-    
     
             
         
