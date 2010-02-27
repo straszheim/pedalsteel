@@ -5,7 +5,7 @@ class E9_Neck:
 
     def __init__(self):
         self.down = set([])
-        self.tuning = [Fs4, Ds4, Gs4, E4, B3, Gs3, Fs3, E3, D3, B2]
+        self.tuning = [Fs^4, Ds^4, Gs^4, E^4, B^3, Gs^3, Fs^3, E^3, D^3, B^2]
 
         self.copedent = dict( nada = [0,0,0,0,0,0,0,0,0,0],
                               P1   = [0,0,0,0,2,0,0,0,0,2],
@@ -23,9 +23,12 @@ class E9_Neck:
         return [self.tuning[index]+i+delta for i in range(25)]
         
     def toggle(self, pedal):
+
         if pedal in self.down:
             self.down.remove(pedal)
         else:
             self.down.add(pedal)
             
-        
+    def allup(self):
+        self.down = set([])
+

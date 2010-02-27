@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+import sys
+
+# sys.path += ['/home/troy/Projects/pedalsteel/pydee/pydeelib']
+# import pydee
+
 import math
 import signal
 signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -9,15 +14,15 @@ from PyQt4.QtCore import *
 
 from Note import *
 import Note as Notemodule
-from Interval import *
 from Neck import *
+import Chord
 
-def highlight(x):
-    if x in [E, Gs, B]:
-        return QtCore.Qt.red
+def nohighlight(x):
     return None
 
-class NeckWidget(QtGui.QGraphicsItem):
+highlight = nohighlight
+
+class NeckWidget(QtGui.QGraphicsWidget):
 
     Type = QtGui.QGraphicsItem.UserType + 3
 
@@ -46,16 +51,10 @@ class NeckWidget(QtGui.QGraphicsItem):
             self.fretlocations[i] = x + (xsize - curlen)
 
         for i in range(self.nstrings):
-            self.stringlocations[i] = ysize * i / (self.nstrings - 1)
+            self.stringlocations[i] = 10+ (ysize-20) * i / (self.nstrings - 1)
 
         self.dotsize=3
         self.dotmargin=10
-
-        def nohighlight(x):
-            return QtCore.Qt.black
-
-        self.highlight = nohighlight
-
 
     def type(self):
         return NeckWidget.Type
@@ -69,11 +68,18 @@ class NeckWidget(QtGui.QGraphicsItem):
         print "paint!"
         painter.setPen(QtGui.QPen(QtCore.Qt.black, 1, QtCore.Qt.SolidLine,
                 QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
-        (x,y, xsize, ysize) = (self.x, self.y, self.xsize, self.ysize)
+        (x,y, w, h) = (self.x, self.y, self.xsize, self.ysize)
         def line(x1,y1,x2,y2):
             # print (x1,y1,x2,y2)
             painter.drawLine(QLineF(QPointF(x1,y1), QPointF(x2,y2)))
-            
+
+        line(x,y,x+w,y)
+        line(x,y,x,y+h)
+
+        line(x+w,y+h,x+w, y)
+        line(x+w,y+h,x, y+h)
+        
+        
         def dot(x, y, color=QtCore.Qt.red, size=3):
             # print (x,y)
             painter.setPen(QtCore.Qt.NoPen)
@@ -82,7 +88,8 @@ class NeckWidget(QtGui.QGraphicsItem):
     
         def text(x, y, s):
             # print (x,y,s)
-            clr = self.highlight(s)
+            global highlight
+            clr = highlight(s)
             if clr:
                 painter.setPen(clr)
             else:
@@ -97,12 +104,13 @@ class NeckWidget(QtGui.QGraphicsItem):
 
         for (fretindex, loc) in enumerate(self.fretlocations):
             # line(loc, y, loc, y+ysize)
-            if fretindex in [3,5,7,9, 12, 15, 17, 19, 21, 24]:
+            if fretindex in [3, 5, 7, 9, 12, 15, 17, 19, 21, 24]:
                 dot(loc, y-self.dotmargin, QtCore.Qt.blue, self.dotsize)
-                dot(loc, y+ysize+self.dotmargin, QtCore.Qt.blue, self.dotsize)
+                dot(loc, y + h + self.dotmargin,
+                    QtCore.Qt.blue, self.dotsize)
             if fretindex in [12,24]:
                 dot(loc, y-self.dotmargin-self.dotsize*2, QtCore.Qt.blue, self.dotsize)
-                dot(loc, y+ysize+self.dotmargin+self.dotsize*2, QtCore.Qt.blue, self.dotsize)
+                dot(loc, y+h+self.dotmargin+self.dotsize*2, QtCore.Qt.blue, self.dotsize)
             for (stringindex, yloc) in enumerate(self.stringlocations):
                 text(loc, yloc, self.tuning[stringindex][fretindex])
                 
@@ -122,6 +130,33 @@ class PedalWidget(QtGui.QGraphicsTextItem):
 
         self.setFont(thisfont)
 
+def schlup(fname):
+    def doit():
+        global highlight
+        execfile(fname, globals(), locals())
+    return doit
+
+def toggle_octave():
+    from Note import show_octave
+    show_octave[0] = not show_octave[0]
+    global widget
+    widget.update()
+    widget.neck.update()
+
+def setkey(key, w):
+    def impl():
+        def myhighlight(x):
+            if x in [key, key+4, key+7, key+10]:
+                return QtCore.Qt.red
+            return None
+        global highlight
+        highlight = myhighlight
+        w.tonicwidget.setPlainText(key.as_flat())
+        Notemodule.tonic = [key]
+        Notemodule.use_numbers()
+        w.update()
+    return impl
+
 class GraphWidget(QtGui.QGraphicsView):
     def __init__(self):
         super(GraphWidget, self).__init__()
@@ -131,6 +166,7 @@ class GraphWidget(QtGui.QGraphicsView):
         scene = QtGui.QGraphicsScene(self)
         scene.setItemIndexMethod(QtGui.QGraphicsScene.NoIndex)
         scene.setSceneRect(-20, -50, 800, 300)
+
         self.setScene(scene)
         self.setCacheMode(QtGui.QGraphicsView.CacheBackground)
         self.setViewportUpdateMode(QtGui.QGraphicsView.BoundingRectViewportUpdate)
@@ -140,12 +176,11 @@ class GraphWidget(QtGui.QGraphicsView):
 
         self.neck = NeckWidget(0, 0, 1000, 150)
         self.neck.tuning = E9_Neck()
-        self.neck.highlight = highlight
 
         scene.addItem(self.neck)
 
-        self.scale(1.0, 1.0)
-        self.setMinimumSize(0, 250)
+        self.scale(2.0, 2.0)
+        self.setMinimumSize(0, 500)
         self.setWindowTitle("Pedal Steel")
         self.timerId = self.startTimer(1000)
 
@@ -174,6 +209,10 @@ class GraphWidget(QtGui.QGraphicsView):
             pedals[name] = gi
             scene.addItem(gi)
 
+        self.tonicwidget = QtGui.QGraphicsTextItem(Notemodule.tonic[0].as_flat())
+        self.tonicwidget.setPos(0,170)
+        scene.addItem(self.tonicwidget)
+
     def wheelEvent(self, event):
         self.scaleView(math.pow(2.0, -event.delta() / 240.0))
 
@@ -201,15 +240,27 @@ class GraphWidget(QtGui.QGraphicsView):
             self.pedals[name].toggle()
 
         keymap = { '1':'P1', '2':'P2', '3':'P3',
-                   'e':'LKL', 'r':'LKU', 't':'LKR',
-                   'f':'RKL', 'g':'RKR'}
+                   'y':'LKL', 'u':'LKU', 'i':'LKR',
+                   'o':'RKL', 'p':'RKR'}
         
-        fnmap = dict(b=Notemodule.use_flats,
-                     s=Notemodule.use_sharps,
-                     n=Notemodule.use_numbers,
-                     q=lambda: sys.exit(1)
-                     )
-        
+        fnmap = dict(#b = Notemodule.use_flats,
+                     #v = Notemodule.use_sharps,
+                     n = Notemodule.use_numbers,
+                     x = lambda: sys.exit(1),
+                     a = setkey(A, self),
+                     A = setkey(As, self),
+                     b = setkey(B, self),
+                     c = setkey(C, self),
+                     C = setkey(Cs, self),
+                     d = setkey(D, self),
+                     D = setkey(Ds, self),
+                     e = setkey(E, self),
+                     f = setkey(F, self),
+                     F = setkey(Fs, self),
+                     g = setkey(G, self),
+                     G = setkey(Gs, self))
+
+        print fnmap
         for t in [event.text()]:
             if t in fnmap.keys():
                 fnmap[str(t)]()
@@ -222,13 +273,9 @@ class GraphWidget(QtGui.QGraphicsView):
         print "keyReleaseEvent!"
 
 
-if __name__ == '__main__':
+app = QtGui.QApplication(sys.argv)
 
-    import sys
+widget = GraphWidget()
+widget.show()
 
-    app = QtGui.QApplication(sys.argv)
-
-    widget = GraphWidget()
-    widget.show()
-
-    sys.exit(app.exec_())
+sys.exit(app.exec_())
