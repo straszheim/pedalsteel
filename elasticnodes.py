@@ -12,6 +12,11 @@ import Note as Notemodule
 from Interval import *
 from Neck import *
 
+def highlight(x):
+    if x in [E, Gs, B]:
+        return QtCore.Qt.red
+    return None
+
 class NeckWidget(QtGui.QGraphicsItem):
 
     Type = QtGui.QGraphicsItem.UserType + 3
@@ -46,6 +51,12 @@ class NeckWidget(QtGui.QGraphicsItem):
         self.dotsize=3
         self.dotmargin=10
 
+        def nohighlight(x):
+            return QtCore.Qt.black
+
+        self.highlight = nohighlight
+
+
     def type(self):
         return NeckWidget.Type
 
@@ -70,8 +81,12 @@ class NeckWidget(QtGui.QGraphicsItem):
             painter.drawEllipse(x, y, size, size)
     
         def text(x, y, s):
-            print (x,y,s)
-            painter.setPen(Qt.darkGray)
+            # print (x,y,s)
+            clr = self.highlight(s)
+            if clr:
+                painter.setPen(clr)
+            else:
+                painter.setPen(QtCore.Qt.black)
             font = QtGui.QFont()
             font.setPointSize(4)
             painter.setFont(font)
@@ -125,6 +140,7 @@ class GraphWidget(QtGui.QGraphicsView):
 
         self.neck = NeckWidget(0, 0, 1000, 150)
         self.neck.tuning = E9_Neck()
+        self.neck.highlight = highlight
 
         scene.addItem(self.neck)
 
@@ -183,26 +199,25 @@ class GraphWidget(QtGui.QGraphicsView):
         def pedaldown(name):
             self.neck.tuning.toggle(name)
             self.pedals[name].toggle()
-            self.neck.update()
 
         keymap = { '1':'P1', '2':'P2', '3':'P3',
                    'e':'LKL', 'r':'LKU', 't':'LKR',
                    'f':'RKL', 'g':'RKR'}
         
+        fnmap = dict(b=Notemodule.use_flats,
+                     s=Notemodule.use_sharps,
+                     n=Notemodule.use_numbers,
+                     q=lambda: sys.exit(1)
+                     )
+        
         for t in [event.text()]:
-            if t == 'q':
-                sys.exit(1)
-            if t == 'b':
-                Notemodule.use_flats()
-                self.neck.update()
-                break
-            if t == 's':
-                Notemodule.use_sharps()
-                self.neck.update()
-                break
+            if t in fnmap.keys():
+                fnmap[str(t)]()
             if t in keymap.keys():
                 pedaldown(keymap[str(t)])
             
+        self.neck.update()
+
     def keyReleaseEvent(self, event):
         print "keyReleaseEvent!"
 

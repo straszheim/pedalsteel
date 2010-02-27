@@ -29,7 +29,14 @@ def use_sharps():
     value2letter = dict(notes)
     letter2value = dict([(y,x) for (x,y) in notes])
 
-use_flats()
+def use_numbers(tonic):
+    global value2letter, letter2value, notes
+    l = ['1', 'b2', '2', 'b3', '3', '4', 'b5', '5', 'b6', '6', 'b7', '7']
+    for (i, val) in enumerate(l):
+        value2letter[(i+tonic)%12] = val
+        letter2value[value2letter[(i+tonic)%12]] = i
+    
+use_numbers(4)
 
 class Note:
     def __init__(self, octave, value):
