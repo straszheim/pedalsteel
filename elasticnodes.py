@@ -71,14 +71,13 @@ class NeckWidget(QtGui.QGraphicsWidget):
                              QtCore.QPointF(x+xsize, y+ysize))
 
     def paint(self, painter, option, widget):
-        print "paint!"
         painter.setFont(self.font)
 
         painter.setPen(QtGui.QPen(QtCore.Qt.black, 1, QtCore.Qt.SolidLine,
-                QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+                                  QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
         (x,y, w, h) = (self.x, self.y, self.xsize, self.ysize)
+
         def line(x1,y1,x2,y2):
-            # print (x1,y1,x2,y2)
             painter.drawLine(QLineF(QPointF(x1,y1), QPointF(x2,y2)))
 
         line(x,y,x+w,y)
@@ -87,12 +86,27 @@ class NeckWidget(QtGui.QGraphicsWidget):
         line(x+w,y+h,x+w, y)
         line(x+w,y+h,x, y+h)
         
+        def makebrush(tuningdelta):
+            if tuningdelta > 0:
+                return QtGui.QBrush(QtGui.QColor(255, 0, 0, tuningdelta * 15))
+            else:
+                return QtGui.QBrush(QtGui.QColor(0, 0, 255, -1 * tuningdelta * 15))
+            
         pstate = self.tuning.pedalstate()
+        oldbrush = painter.brush()
+        oldpen = painter.pen()
+        painter.setPen(QtGui.QPen(QtGui.QColor(255,255,255,0)))
         for (index, delta) in enumerate(pstate):
             if delta:
+                curbrush = makebrush(delta)
+                painter.setBrush(curbrush)
+                
                 painter.drawRect(x, self.stringlocations[index] - self.fontpixels/2 - 4,
                                  w, 10)
 
+        painter.setBrush(oldbrush)
+        painter.setPen(oldpen)
+                
         def dot(x, y, color=QtCore.Qt.red, size=3):
             # print (x,y)
             painter.setPen(QtCore.Qt.NoPen)
@@ -173,6 +187,10 @@ class GraphWidget(QtGui.QGraphicsView):
 
         self.timerId = 0
 
+        self.keymap = { '1':'P1', '2':'P2', '3':'P3',
+                        'y':'LKL', 'u':'LKU', 'i':'LKR',
+                        'o':'RKL', 'p':'RKR'}
+        
         scene = QtGui.QGraphicsScene(self)
         scene.setItemIndexMethod(QtGui.QGraphicsScene.NoIndex)
         scene.setSceneRect(-20, -50, 800, 300)
@@ -241,18 +259,16 @@ class GraphWidget(QtGui.QGraphicsView):
     def enterEvent(self, event):
         print "enterEvent!"
 
-    def keyPressEvent(self, event):
+    def pedtoggle(self, name):
+        self.neck.tuning.toggle(name)
+        self.pedals[name].toggle()
 
+
+    def keyPressEvent(self, event):
+        if event.isAutoRepeat():
+            return
         print "keyPressEvent!", event
 
-        def pedaldown(name):
-            self.neck.tuning.toggle(name)
-            self.pedals[name].toggle()
-
-        keymap = { '1':'P1', '2':'P2', '3':'P3',
-                   'y':'LKL', 'u':'LKU', 'i':'LKR',
-                   'o':'RKL', 'p':'RKR'}
-        
         fnmap = dict(#b = Notemodule.use_flats,
                      #v = Notemodule.use_sharps,
                      n = Notemodule.use_numbers,
@@ -274,12 +290,18 @@ class GraphWidget(QtGui.QGraphicsView):
         for t in [event.text()]:
             if t in fnmap.keys():
                 fnmap[str(t)]()
-            if t in keymap.keys():
-                pedaldown(keymap[str(t)])
+            if t in self.keymap.keys():
+                self.pedtoggle(self.keymap[str(t)])
             
         self.neck.update()
 
     def keyReleaseEvent(self, event):
+        if event.isAutoRepeat():
+            return
+        for t in [event.text()]:
+            if t in self.keymap.keys():
+                self.pedtoggle(self.keymap[str(t)])
+            
         self.neck.update()
 
 
