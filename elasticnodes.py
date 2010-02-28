@@ -299,13 +299,14 @@ class GraphWidget(QtGui.QGraphicsView):
         self.neck.update()
 
     def keyReleaseEvent(self, event):
-        if event.isAutoRepeat():
-            return
-        for t in [event.text()]:
-            if t in self.keymap.keys():
-                self.pedtoggle(self.keymap[str(t)])
-            
-        self.neck.update()
+        pass
+#         if event.isAutoRepeat():
+#             return
+#         for t in [event.text()]:
+#             if t in self.keymap.keys():
+#                 self.pedtoggle(self.keymap[str(t)])
+#             
+#         self.neck.update()
 
 
 app = QtGui.QApplication(sys.argv)
