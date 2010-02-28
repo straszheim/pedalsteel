@@ -286,6 +286,9 @@ class GraphWidget(QtGui.QGraphicsView):
                      g = setkey(G, self),
                      G = setkey(Gs, self))
 
+        fnmap['+'] = Notemodule.use_sharps
+        fnmap['-'] = Notemodule.use_flats
+
         print fnmap
         for t in [event.text()]:
             if t in fnmap.keys():
