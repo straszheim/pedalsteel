@@ -55,8 +55,7 @@ class NeckWidget(QtGui.QGraphicsWidget):
             v = 10+ (ysize-20) * i / (self.nstrings - 1)
             self.stringlocations[i] = v
 
-        self.dotsize=3
-        self.dotmargin=10
+        self.dotsize=5
 
         self.font = QtGui.QFont()
         self.font.setPointSize(4)
@@ -126,17 +125,20 @@ class NeckWidget(QtGui.QGraphicsWidget):
             t = t.replace('b', u'\u266D')
             painter.drawText(x, y, t)
 
+        prevloc = 0
         for (fretindex, loc) in enumerate(self.fretlocations):
             # line(loc, y, loc, y+ysize)
-            if fretindex in [3, 5, 7, 9, 12, 15, 17, 19, 21, 24]:
-                dot(loc, y-self.dotmargin, QtCore.Qt.blue, self.dotsize)
-                dot(loc, y + h + self.dotmargin,
-                    QtCore.Qt.blue, self.dotsize)
+            xloc = loc - (loc - prevloc)/2
+            ycenter = y+self.ysize/2
+            if fretindex in [3, 5, 7, 9, 15, 17, 19, 21]:
+                dot(xloc, ycenter, QtCore.Qt.blue, self.dotsize)
             if fretindex in [12,24]:
-                dot(loc, y-self.dotmargin-self.dotsize*2, QtCore.Qt.blue, self.dotsize)
-                dot(loc, y+h+self.dotmargin+self.dotsize*2, QtCore.Qt.blue, self.dotsize)
+                dot(xloc, ycenter + self.dotsize, QtCore.Qt.blue, self.dotsize)
+                dot(xloc, ycenter - self.dotsize, QtCore.Qt.blue, self.dotsize)
             for (stringindex, yloc) in enumerate(self.stringlocations):
                 text(loc, yloc, self.tuning[stringindex][fretindex])
+
+            prevloc = loc
                 
 class PedalWidget(QtGui.QGraphicsTextItem):
     def __init__(self, name):
@@ -300,14 +302,6 @@ class GraphWidget(QtGui.QGraphicsView):
 
     def keyReleaseEvent(self, event):
         pass
-#         if event.isAutoRepeat():
-#             return
-#         for t in [event.text()]:
-#             if t in self.keymap.keys():
-#                 self.pedtoggle(self.keymap[str(t)])
-#             
-#         self.neck.update()
-
 
 app = QtGui.QApplication(sys.argv)
 
