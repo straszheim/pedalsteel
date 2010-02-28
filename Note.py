@@ -1,45 +1,10 @@
 #!/usr/bin/python
 
 import sys
+from Global import *
 from Interval import Interval
 from Chord import *
 
-sharp_notes = list(enumerate(['C', 'Cs', 'D', 'Ds', 'E', 'F',
-                              'Fs', 'G', 'Gs', 'A', 'As', 'B']))
-
-flat_notes = list(enumerate(['C', 'Db', 'D', 'Eb', 'E', 'F',
-                             'Gb', 'G', 'Ab', 'A', 'Bb', 'B']))
-
-notes = flat_notes
-
-value2flat = dict(flat_notes)
-value2sharp = dict(sharp_notes)
-
-value2letter = {}
-letter2value = {}
-
-show_octave = [False]
-
-def use_flats():
-    global value2letter, letter2value, notes
-    notes = flat_notes
-    value2letter = dict(notes)
-    letter2value = dict([(y,x) for (x,y) in notes])
-
-
-def use_sharps():
-    global value2letter, letter2value, notes
-    notes = sharp_notes
-    value2letter = dict(notes)
-    letter2value = dict([(y,x) for (x,y) in notes])
-
-def use_numbers():
-    global value2letter, letter2value, notes, tonic
-    l = ['1', 'b2', '2', 'b3', '3', '4', 'b5', '5', 'b6', '6', 'b7', '7']
-    for (i, val) in enumerate(l):
-        value2letter[(i+tonic[0].value)%12] = val
-        letter2value[value2letter[(i+tonic[0].value)%12]] = i
-    
 class Note:
     def __init__(self, octave, value):
         self.octave = octave
@@ -122,15 +87,17 @@ class Note:
 
     def __str__(self):
         self.normalize()
-        l = value2letter[self.value]
-        if self.octave and show_octave[0]:
-            l += '^' + str(self.octave)
-        return l
+        return pretty(self)
 
     def as_flat(self):
-        self.normalize()
-        return dict(flat_notes)[self.value] + ('^' + str(self.octave) if self.octave and show_octave[0] else '')
+        return pretty(self)
 
+    def as_sharp(self):
+        return pretty(self)
+
+    def as_letter(self):
+        self.normalize()
+        return self.as_sharp()
 
     def __repr__(self):
         return str(self)
@@ -144,8 +111,8 @@ values_file.write("print 'importing values'\n")
 
 values_file.write("print '....>', dir()\n")
 
-print notes
-for value, letter in sharp_notes + flat_notes:
+for value, letter in list(enumerate(letternotes[sharp][ALL])) + \
+        list(enumerate(letternotes[flat][ALL])):
     values_file.write('%s = Note(octave=None, value=%s)\n' % (letter, value))
 
 #for octave in range(10):
@@ -156,6 +123,4 @@ values_file.close()
 
 execfile('NoteValues.py')
 
-tonic = [C]
-use_numbers()
 

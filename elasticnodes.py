@@ -12,6 +12,7 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 
+import Global
 from Note import *
 import Note as Notemodule
 from Neck import *
@@ -52,7 +53,7 @@ class NeckWidget(QtGui.QGraphicsWidget):
             self.fretlocations[i] = x + (xsize - curlen)
 
         for i in range(self.nstrings):
-            v = 10+ (ysize-20) * i / (self.nstrings - 1)
+            v = 10 + (ysize-20) * i / (self.nstrings - 1)
             self.stringlocations[i] = v
 
         self.dotsize=5
@@ -120,16 +121,19 @@ class NeckWidget(QtGui.QGraphicsWidget):
                 painter.setPen(clr)
             else:
                 painter.setPen(QtCore.Qt.black)
+            print "S=%s" % s
             t = unicode(s)
             t = t.replace('s', u'\u266F')
             t = t.replace('b', u'\u266D')
             painter.drawText(x, y, t)
 
+        #
+        #  Fretboard dots
+        #
         prevloc = 0
         for (fretindex, loc) in enumerate(self.fretlocations):
-            # line(loc, y, loc, y+ysize)
             xloc = loc - (loc - prevloc)/2
-            ycenter = y+self.ysize/2
+            ycenter = (self.stringlocations[0] + self.stringlocations[-1]) / 2 -4
             if fretindex in [3, 5, 7, 9, 15, 17, 19, 21]:
                 dot(xloc, ycenter, QtCore.Qt.blue, self.dotsize)
             if fretindex in [12,24]:
@@ -169,17 +173,17 @@ def toggle_octave():
     widget.update()
     widget.neck.update()
 
+
 def setkey(key, w):
     def impl():
+        Global.tonic = [key]
         def myhighlight(x):
-            if x in [key, key+4, key+7, key+10]:
+            if x in key.x7:
                 return QtCore.Qt.red
             return None
         global highlight
         highlight = myhighlight
-        w.tonicwidget.setPlainText(key.as_flat())
-        Notemodule.tonic = [key]
-        Notemodule.use_numbers()
+        w.tonicwidget.setPlainText(Global.letter(key))
         w.update()
     return impl
 
@@ -239,7 +243,8 @@ class GraphWidget(QtGui.QGraphicsView):
             pedals[name] = gi
             scene.addItem(gi)
 
-        self.tonicwidget = QtGui.QGraphicsTextItem(Notemodule.tonic[0].as_flat())
+        Global.tonic = [C]
+        self.tonicwidget = QtGui.QGraphicsTextItem(Global.tonic[0].as_flat())
         self.tonicwidget.setPos(0,170)
         scene.addItem(self.tonicwidget)
 
@@ -266,14 +271,19 @@ class GraphWidget(QtGui.QGraphicsView):
         self.pedals[name].toggle()
 
 
+
     def keyPressEvent(self, event):
         if event.isAutoRepeat():
             return
         print "keyPressEvent!", event
 
+        def setdtype(y):
+            def impl(): Global.displayer = [y]
+            return impl
+        
+
         fnmap = dict(#b = Notemodule.use_flats,
                      #v = Notemodule.use_sharps,
-                     n = Notemodule.use_numbers,
                      x = lambda: sys.exit(1),
                      a = setkey(A, self),
                      A = setkey(As, self),
@@ -286,10 +296,20 @@ class GraphWidget(QtGui.QGraphicsView):
                      f = setkey(F, self),
                      F = setkey(Fs, self),
                      g = setkey(G, self),
-                     G = setkey(Gs, self))
+                     G = setkey(Gs, self),
+                     s = setdtype(Global.solfege),
+                     l = setdtype(Global.letternotes),
+                     t = setdtype(Global.scaletones)
+                     )
 
-        fnmap['+'] = Notemodule.use_sharps
-        fnmap['-'] = Notemodule.use_flats
+        def setglobal(y):
+            def impl(): Global.sharporflat = [y]
+            return impl
+        
+        fnmap['+'] = setglobal(Global.sharp) 
+        fnmap['-'] = setglobal(Global.flat) 
+
+        setkey(Global.tonic[0], self)
 
         print fnmap
         for t in [event.text()]:

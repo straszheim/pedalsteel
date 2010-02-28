@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from Global import *
 from Note import *
 from Interval import *
 from Neck import *
@@ -64,3 +65,9 @@ def test_chords():
     assert G in A.x7
     assert Gb not in A.x7
     assert Ab not in A.x7
+
+def test_globals():
+    assert scaletones[sharp][3] == '2s'
+    assert solfege[sharp][3] == 'Ri'
+    assert letternotes[sharp][3] == 'Ri'
+    
