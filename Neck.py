@@ -1,3 +1,4 @@
+
 from Note import *
 
 class E9_Neck:
@@ -32,3 +33,10 @@ class E9_Neck:
     def allup(self):
         self.down = set([])
 
+    def pedalstate(self):
+        state = [0]*len(self.tuning)
+        for p in self.down:
+            state = map(sum, zip(state, self.copedent[p]))
+        return state
+
+    

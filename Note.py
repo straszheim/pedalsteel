@@ -53,6 +53,30 @@ class Note:
             n.octave -= 1
         return n
 
+    @property
+    def M7(self):
+        return [self + x for x in M7]
+
+    @property
+    def m7(self):
+        return [self + x for x in m7]
+
+    @property
+    def x7(self):
+        return [self + x for x in x7]
+
+    @property
+    def x7b5(self):
+        return [self + x for x in x7b5]
+
+    @property
+    def m7b5(self):
+        return [self + x for x in m7b5]
+
+    @property
+    def d7(self):
+        return [self + x for x in d7]
+
     def normalize(self):
         while self.value >= 12:
             self.value -= 12

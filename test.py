@@ -6,40 +6,61 @@ from Neck import *
 
 import Note as nmod
 
-
 def test_notes():
-    assert A == A0
-    assert G == G0
-    assert A == A1
-    assert C == C3
-    assert C != A3
-    assert A2 != A3
+    assert A == A^0
+    assert G == G^0
+    assert A == A^1
+    assert C == C^3
+    assert C != A^3
+    assert A^2 != A^3
     
     assert A + 2 == B
     assert A + 14 == B
     assert G + 2 == A
-    assert A3 + 2 == B3
-    assert B3 + 14 == Cs5
+    assert (A^3) + 2 == B^3
+    assert (B^3) + 14 == Cs^5
     
     assert A - 2 == G
     assert A - 14 == G
-    assert A3 - 2 == G3
-    assert C3 - 2 == Bb2
-    assert C3 - 2 == As2
-    assert G3 - 14 == F2
+    assert (A^3) - 2 == G^3
+    assert (C^3) - 2 == Bb^2
+    assert (C^3) - 2 == As^2
+    assert (G^3) - 14 == F^2
 
     nmod.show_octave[0] = True
 
-    assert G3 + m3 == Bb3
-    assert G3 + m3 == Bb
+    assert (G^3) + m3 == Bb^3
+    assert (G^3) + m3 == Bb
 
-    assert G3 + M3 == B3
-    assert G3 + M3 == B
+    assert (G^3) + M3 == B^3
+    assert (G^3) + M3 == B
 
 def test_neck():
-    n = E9_Neck()
-    
-    print n[0][0] == Fs4
-    print n[0][12] == Fs5
-    print n[9][12] == B4
 
+    n = E9_Neck()
+    print n[0][0] == Fs^4
+    print n[0][12] == Fs^5
+    print n[9][12] == B^4
+
+
+def test_chords():
+
+    assert C in C.M7
+    assert E in C.M7
+    assert G in C.M7
+    assert B in C.M7
+
+    assert C in C.m7
+    assert Eb in C.m7
+    assert G in C.m7
+    assert Bb in C.m7
+    assert B not in C.m7
+
+    assert all([x in C.m7b5 for x in m7b5])
+    
+    assert A in A.x7
+    assert Cs in A.x7
+    assert E in A.x7
+    assert G in A.x7
+    assert Gb not in A.x7
+    assert Ab not in A.x7

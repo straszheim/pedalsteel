@@ -39,6 +39,7 @@ class NeckWidget(QtGui.QGraphicsWidget):
         self.nstrings = 10
         self.fretlocations = [0]*(self.nfrets+1)
         self.stringlocations = [0]*self.nstrings
+        self.stringboxes = [None]*self.nstrings
 
         ratio = 2**(1./12)
         print "ratio=%f" % ratio
@@ -51,11 +52,16 @@ class NeckWidget(QtGui.QGraphicsWidget):
             self.fretlocations[i] = x + (xsize - curlen)
 
         for i in range(self.nstrings):
-            self.stringlocations[i] = 10+ (ysize-20) * i / (self.nstrings - 1)
+            v = 10+ (ysize-20) * i / (self.nstrings - 1)
+            self.stringlocations[i] = v
 
         self.dotsize=3
         self.dotmargin=10
 
+        self.font = QtGui.QFont()
+        self.font.setPointSize(4)
+        self.fontpixels = QtGui.QFontInfo(self.font).pixelSize()
+        
     def type(self):
         return NeckWidget.Type
 
@@ -66,6 +72,8 @@ class NeckWidget(QtGui.QGraphicsWidget):
 
     def paint(self, painter, option, widget):
         print "paint!"
+        painter.setFont(self.font)
+
         painter.setPen(QtGui.QPen(QtCore.Qt.black, 1, QtCore.Qt.SolidLine,
                 QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
         (x,y, w, h) = (self.x, self.y, self.xsize, self.ysize)
@@ -79,7 +87,12 @@ class NeckWidget(QtGui.QGraphicsWidget):
         line(x+w,y+h,x+w, y)
         line(x+w,y+h,x, y+h)
         
-        
+        pstate = self.tuning.pedalstate()
+        for (index, delta) in enumerate(pstate):
+            if delta:
+                painter.drawRect(x, self.stringlocations[index] - self.fontpixels/2 - 4,
+                                 w, 10)
+
         def dot(x, y, color=QtCore.Qt.red, size=3):
             # print (x,y)
             painter.setPen(QtCore.Qt.NoPen)
@@ -94,9 +107,6 @@ class NeckWidget(QtGui.QGraphicsWidget):
                 painter.setPen(clr)
             else:
                 painter.setPen(QtCore.Qt.black)
-            font = QtGui.QFont()
-            font.setPointSize(4)
-            painter.setFont(font)
             t = unicode(s)
             t = t.replace('s', u'\u266F')
             t = t.replace('b', u'\u266D')
@@ -270,7 +280,7 @@ class GraphWidget(QtGui.QGraphicsView):
         self.neck.update()
 
     def keyReleaseEvent(self, event):
-        print "keyReleaseEvent!"
+        self.neck.update()
 
 
 app = QtGui.QApplication(sys.argv)
