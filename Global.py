@@ -49,19 +49,31 @@ def pretty(n):
         if displayer[0] == scaletones:
             v -= tonic[0].value
     v = v % 12
-    print "value=", v
     s = displayer[0][sharporflat[0]][v]
     if n.octave and show_octave[0]:
         s += '^' + str(n.octave)
-    print "returning %s for %d" %( s, n.value)
-    return s
+    t = unicode(s)
+    t = t.replace('s', u'\u266F')
+    t = t.replace('b', u'\u266D')
+    return t
 
 def letter(n):
     n.normalize()
     s = letternotes[sharporflat[0]][n.value]
     if n.octave and show_octave[0]:
         s += '^' + str(n.octave)
-    print "returning %s for %d" %( s, n.value)
-    return s
+    # print "returning %s for %d" %( s, n.value)
+    t = unicode(s)
+    t = t.replace('s', u'\u266F')
+    t = t.replace('b', u'\u266D')
+    return t
 
 tonic = [None]
+
+chord = []
+chordname = ''
+
+def nohighlight(x):
+    return None
+
+highlight = nohighlight

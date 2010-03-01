@@ -19,16 +19,24 @@ class Note:
         return n
 
     @property
+    def M(self):
+        return [self + x for x in M]
+
+    @property
+    def m(self):
+        return [self + x for x in m]
+
+    @property
     def M7(self):
         return [self + x for x in M7]
 
     @property
-    def m7(self):
-        return [self + x for x in m7]
-
-    @property
     def x7(self):
         return [self + x for x in x7]
+
+    @property
+    def m7(self):
+        return [self + x for x in m7]
 
     @property
     def x7b5(self):
@@ -88,16 +96,6 @@ class Note:
     def __str__(self):
         self.normalize()
         return pretty(self)
-
-    def as_flat(self):
-        return pretty(self)
-
-    def as_sharp(self):
-        return pretty(self)
-
-    def as_letter(self):
-        self.normalize()
-        return self.as_sharp()
 
     def __repr__(self):
         return str(self)

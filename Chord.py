@@ -16,9 +16,11 @@ M7 = M + [i.M7]
 x7 = M + [i.m7]
 m7 = m + [i.m7]
 
-x7b5 = [i.P1, i.M3, i.d5, i.m7]
-m7b5 = d + [i.m7]
-d7 = d + [i.d7]
+x7b5 =  [i.P1, i.M3, i.d5, i.m7]
+x7s5 =  [i.P1, i.M3, i.a5, i.m7]
+m7b5 =  d + [i.m7]
+d7   =  d + [i.d7]
+x7s9 =  [i.P1, i.M3, i.m7, i.s9]
 
 chord_types = {
     'M' : M,
@@ -27,8 +29,10 @@ chord_types = {
     'x7' : x7,
     'm7' : m7,
     'x7b5' : x7b5,
+    'x7+5' : x7s5,
     'm7b5' : m7b5,
-    'd7' : d7
+    'd7' : d7,
+    'x7+9' : x7s9
     }
 
 

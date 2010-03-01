@@ -54,6 +54,7 @@ M7 = Interval(11)
 P8 = Interval(12)
 m9 = P8 + m2
 M9 = P8 + M2
+s9 = P8 + m3
 
 m13 = P8 + m6
 M13 = P8 + M6

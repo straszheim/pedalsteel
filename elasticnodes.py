@@ -12,138 +12,14 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import *
 
-import Global
+import Global as g
 from Note import *
 import Note as Notemodule
 from Neck import *
 import Chord
+from NeckWidget import NeckWidget
 
-def nohighlight(x):
-    return None
 
-highlight = nohighlight
-
-class NeckWidget(QtGui.QGraphicsWidget):
-
-    Type = QtGui.QGraphicsItem.UserType + 3
-
-    def __init__(self, x, y, xsize, ysize):
-        super(NeckWidget, self).__init__()
-        (self.x, self.y) = (x, y)
-        (self.xsize, self.ysize) = (xsize, ysize)
-        self.kneey = y + ysize + 15
-
-        (self.lkl, self.lku, self.lkr, self.rkl, self.rkr) = \
-            [x*25 for x in range(5)]
-
-        self.nfrets = 24
-        self.nstrings = 10
-        self.fretlocations = [0]*(self.nfrets+1)
-        self.stringlocations = [0]*self.nstrings
-        self.stringboxes = [None]*self.nstrings
-
-        ratio = 2**(1./12)
-        print "ratio=%f" % ratio
-        curlen = xsize
-        self.fretlocations[0] = x
-
-        for i in range(1, self.nfrets+1):
-            nextfret = (curlen / ratio) + x
-            curlen /= ratio
-            self.fretlocations[i] = x + (xsize - curlen)
-
-        for i in range(self.nstrings):
-            v = 10 + (ysize-20) * i / (self.nstrings - 1)
-            self.stringlocations[i] = v
-
-        self.dotsize=5
-
-        self.font = QtGui.QFont()
-        self.font.setPointSize(4)
-        self.fontpixels = QtGui.QFontInfo(self.font).pixelSize()
-        
-    def type(self):
-        return NeckWidget.Type
-
-    def boundingRect(self):
-        (x,y, xsize, ysize) = (self.x, self.y, self.xsize, self.ysize)
-        return QtCore.QRectF(QtCore.QPointF(x,y),
-                             QtCore.QPointF(x+xsize, y+ysize))
-
-    def paint(self, painter, option, widget):
-        painter.setFont(self.font)
-
-        painter.setPen(QtGui.QPen(QtCore.Qt.black, 1, QtCore.Qt.SolidLine,
-                                  QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
-        (x,y, w, h) = (self.x, self.y, self.xsize, self.ysize)
-
-        def line(x1,y1,x2,y2):
-            painter.drawLine(QLineF(QPointF(x1,y1), QPointF(x2,y2)))
-
-        line(x,y,x+w,y)
-        line(x,y,x,y+h)
-
-        line(x+w,y+h,x+w, y)
-        line(x+w,y+h,x, y+h)
-        
-        def makebrush(tuningdelta):
-            if tuningdelta > 0:
-                return QtGui.QBrush(QtGui.QColor(255, 0, 0, tuningdelta * 15))
-            else:
-                return QtGui.QBrush(QtGui.QColor(0, 0, 255, -1 * tuningdelta * 15))
-            
-        pstate = self.tuning.pedalstate()
-        oldbrush = painter.brush()
-        oldpen = painter.pen()
-        painter.setPen(QtGui.QPen(QtGui.QColor(255,255,255,0)))
-        for (index, delta) in enumerate(pstate):
-            if delta:
-                curbrush = makebrush(delta)
-                painter.setBrush(curbrush)
-                
-                painter.drawRect(x, self.stringlocations[index] - self.fontpixels/2 - 4,
-                                 w, 10)
-
-        painter.setBrush(oldbrush)
-        painter.setPen(oldpen)
-                
-        def dot(x, y, color=QtCore.Qt.red, size=3):
-            # print (x,y)
-            painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(color)
-            painter.drawEllipse(x, y, size, size)
-    
-        def text(x, y, s):
-            # print (x,y,s)
-            global highlight
-            clr = highlight(s)
-            if clr:
-                painter.setPen(clr)
-            else:
-                painter.setPen(QtCore.Qt.black)
-            print "S=%s" % s
-            t = unicode(s)
-            t = t.replace('s', u'\u266F')
-            t = t.replace('b', u'\u266D')
-            painter.drawText(x, y, t)
-
-        #
-        #  Fretboard dots
-        #
-        prevloc = 0
-        for (fretindex, loc) in enumerate(self.fretlocations):
-            xloc = loc - (loc - prevloc)/2
-            ycenter = (self.stringlocations[0] + self.stringlocations[-1]) / 2 -4
-            if fretindex in [3, 5, 7, 9, 15, 17, 19, 21]:
-                dot(xloc, ycenter, QtCore.Qt.blue, self.dotsize)
-            if fretindex in [12,24]:
-                dot(xloc, ycenter + self.dotsize, QtCore.Qt.blue, self.dotsize)
-                dot(xloc, ycenter - self.dotsize, QtCore.Qt.blue, self.dotsize)
-            for (stringindex, yloc) in enumerate(self.stringlocations):
-                text(loc, yloc, self.tuning[stringindex][fretindex])
-
-            prevloc = loc
-                
 class PedalWidget(QtGui.QGraphicsTextItem):
     def __init__(self, name):
         super(PedalWidget, self).__init__(name)
@@ -160,12 +36,6 @@ class PedalWidget(QtGui.QGraphicsTextItem):
 
         self.setFont(thisfont)
 
-def schlup(fname):
-    def doit():
-        global highlight
-        execfile(fname, globals(), locals())
-    return doit
-
 def toggle_octave():
     from Note import show_octave
     show_octave[0] = not show_octave[0]
@@ -176,15 +46,21 @@ def toggle_octave():
 
 def setkey(key, w):
     def impl():
-        Global.tonic = [key]
+        g.tonic[0] = key
         def myhighlight(x):
-            if x in key.x7:
+            if x in g.chord:
                 return QtCore.Qt.red
             return None
-        global highlight
-        highlight = myhighlight
-        w.tonicwidget.setPlainText(Global.letter(key))
+        g.highlight = myhighlight
+        w.tonicwidget.setPlainText(g.letter(key) + g.chordname)
         w.update()
+    return impl
+
+def setchordtype(type, w):
+    def impl():
+        g.chordname = type
+        g.chord=[g.tonic[0] + x for x in Chord.chord_types[type]]
+        w.tonicwidget.setPlainText(g.letter(g.tonic[0]) + type)
     return impl
 
 class GraphWidget(QtGui.QGraphicsView):
@@ -222,7 +98,7 @@ class GraphWidget(QtGui.QGraphicsView):
         # pedals
         # 
         spacing = 100
-        pedalx = 100
+        pedalx = 200
         pedaly = 170
 
         self.pedals = {}
@@ -234,7 +110,7 @@ class GraphWidget(QtGui.QGraphicsView):
             pedals[name] = gi
             scene.addItem(gi)
 
-        pedalx = 100
+        pedalx = 200
         pedaly = 185
         for name in ['P1', 'P2', 'P3']:
             gi = PedalWidget(name)
@@ -243,9 +119,12 @@ class GraphWidget(QtGui.QGraphicsView):
             pedals[name] = gi
             scene.addItem(gi)
 
-        Global.tonic = [C]
-        self.tonicwidget = QtGui.QGraphicsTextItem(Global.tonic[0].as_flat())
+        g.tonic = [C]
+        self.tonicwidget = QtGui.QGraphicsTextItem(g.letter(g.tonic[0]) + g.chordname)
         self.tonicwidget.setPos(0,170)
+        font = self.tonicwidget.font()
+        font.setPointSize(30)
+        self.tonicwidget.setFont(font)
         scene.addItem(self.tonicwidget)
 
     def wheelEvent(self, event):
@@ -278,38 +157,51 @@ class GraphWidget(QtGui.QGraphicsView):
         print "keyPressEvent!", event
 
         def setdtype(y):
-            def impl(): Global.displayer = [y]
+            def impl():
+                print "setting displayer to", [y]
+                g.displayer = [y]
             return impl
         
 
-        fnmap = dict(#b = Notemodule.use_flats,
-                     #v = Notemodule.use_sharps,
-                     x = lambda: sys.exit(1),
-                     a = setkey(A, self),
-                     A = setkey(As, self),
-                     b = setkey(B, self),
-                     c = setkey(C, self),
-                     C = setkey(Cs, self),
-                     d = setkey(D, self),
-                     D = setkey(Ds, self),
-                     e = setkey(E, self),
-                     f = setkey(F, self),
-                     F = setkey(Fs, self),
-                     g = setkey(G, self),
-                     G = setkey(Gs, self),
-                     s = setdtype(Global.solfege),
-                     l = setdtype(Global.letternotes),
-                     t = setdtype(Global.scaletones)
-                     )
+        fnmap = { 'x' : lambda: sys.exit(1),
+                  'a' : setkey(A, self),
+                  'A' : setkey(As, self),
+                  'b' : setkey(B, self),
+                  'c' : setkey(C, self),
+                  'C' : setkey(Cs, self),
+                  'd' : setkey(D, self),
+                  'D' : setkey(Ds, self),
+                  'e' : setkey(E, self),
+                  'f' : setkey(F, self),
+                  'F' : setkey(Fs, self),
+                  'g' : setkey(G, self),
+                  'G' : setkey(Gs, self),
+                  's' : setdtype(g.solfege),
+                  'l' : setdtype(g.letternotes),
+                  't' : setdtype(g.scaletones),
+                  'm' : setchordtype('m', self),
+                  'M' : setchordtype('M', self),
+                  'n' : setchordtype('m7', self),
+                  'N' : setchordtype('M7', self),
+                  'h' : setchordtype('x7', self),
+                  'H' : setchordtype('x7b5', self),
+                  'j' : setchordtype('m7b5', self),
+                  'J' : setchordtype('d7', self),
+                  'k' : setchordtype('x7+5', self),
+                  'K' : setchordtype('x7+9', self),
+                  }
 
         def setglobal(y):
-            def impl(): Global.sharporflat = [y]
+            def impl():
+                g.sharporflat = [y]
+                self.tonicwidget.setPlainText(g.letter(g.tonic[0]) + g.chordname)
+                
             return impl
         
-        fnmap['+'] = setglobal(Global.sharp) 
-        fnmap['-'] = setglobal(Global.flat) 
+        fnmap['+'] = setglobal(g.sharp) 
+        fnmap['-'] = setglobal(g.flat) 
 
-        setkey(Global.tonic[0], self)
+        setkey(g.tonic[0], self)
 
         print fnmap
         for t in [event.text()]:
