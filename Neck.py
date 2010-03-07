@@ -1,22 +1,74 @@
 
 from Note import *
 
-class E9_Neck:
+
+nada = [0, 0, 0, 0, 0,  0, 0, 0, 0, 0]
+
+class E9:
+    tuning = [B^2, D^3,  E^3,  Fs^3, Gs^3,
+              B^3, E^4,  Gs^4,  Ds^4, Fs^4],
+    copedent = dict(P1   = [+2, 0, 0, 0, 0, +2, 0, 0, 0, 0], 
+                    P2   = [ 0, 0, 0, 0,+1,  0, 0,+1, 0, 0], 
+                    P3   = [ 0, 0, 0, 0, 0, +2,+2, 0, 0, 0], 
+                    P4   = [ 0, 0, 0, 0,-2,  0, 0, 0, 0, 0],
+                    P5   = nada,
+                    P6   = nada,
+                    P7   = nada,
+                    P8   = nada,
+
+                    LKL  = [ 0, 0,+1, 0, 0,  0,+1, 0, 0, 0], 
+                    LKU  = [-1, 0, 0, 0, 0, -1, 0, 0, 0, 0], 
+                    LKR  = [ 0, 0,-1, 0, 0,  0,-1, 0, 0, 0], 
+                   #RKL  = [ 0, 0, 0, 0,-2,  0, 0, 0,+1,+2], 
+                    RKL  = [ 0, 0, 0,+2, 0,  0, 0, 0, 0,+2], 
+                   #RKR  = [ 0,-1, 0, 0, 0,  0, 0, 0,-2, 0])
+                    RKR  = [ 0, 0, 0, 0, 0,  0, 0, 0,-2, 0])
 
 
-    def __init__(self):
+class E9_minor:
+    tuning = [B^2, D^3,  E^3,  Fs^3, G^3,
+              B^3, E^4,  G^4,  Ds^4, Fs^4],
+    copedent = dict(P1   = [+1, 0, 0, 0, 0, +1, 0, 0, 0, 0], 
+                    P2   = [ 0, 0, 0, 0,+2,  0, 0,+2, 0, 0], 
+                    P3   = [ 0, 0, 0, 0, 0, +1,+2, 0, 0, 0], 
+
+                    LKL  = [ 0, 0,+1, 0, 0,  0,+1, 0, 0, 0], 
+                    LKU  = [-1, 0, 0, 0, 0, -1, 0, 0, 0, 0], 
+                    LKR  = [ 0, 0,-1, 0, 0,  0,-1, 0, 0, 0], 
+                    RKL  = [ 0, 0, 0, 0,-1,  0, 0, 0,+1,+2], 
+                    RKR  = [ 0,-2, 0, 0, 0,  0, 0, 0,-1, 0])
+
+class C6:
+    tuning = [C^2,  F^2,  A^3,  C^3,  E^3,
+              G^3,  A^4,  C^4,  E^4,  G^4],
+    copedent = dict(P1   = nada,
+                    P2   = nada,
+                    P3   = nada,
+                    P4   = [ 0, 0,+2, 0, 0,  0,+2, 0, 0, 0], 
+                    P5   = [ 0, 0, 0, 0, 0, -1, 0, 0, 0,+1],
+                    P6   = [ 0, 0, 0, 0,+1,  0, 0, 0,+1, 0],
+                    P7   = [ 0, 0, 0, 0,+2, +2, 0, 0, 0, 0],
+                    P8   = [-3,-1, 0,+1, 0,  0, 0, 0, 0, 0],
+                                    
+                    LKL  = [ 0, 0, 0, 0, 0,  0,-1, 0, 0, 0], 
+                    LKU  = [ 0, 0, 0, 0, 0,  0, 0, 0, 0, 0], 
+                    LKR  = [ 0, 0, 0, 0, 0,  0,+1, 0, 0, 0], 
+                    RKL  = [ 0, 0, 0, 0, 0,  0, 0,-1, 0, 0], 
+                    RKR  = [ 0, 0, 0, 0, 0,  0, 0,+1, 0, 0])
+
+class NeckModel:
+
+    def __init__(self, model):
         self.down = set([])
-        self.tuning = [Fs^4, Ds^4, Gs^4, E^4, B^3, Gs^3, Fs^3, E^3, D^3, B^2]
+        # these were Gs
+        self.tuning = model.tuning[0]
+        print "TUNING=", model.tuning
+        self.tuning.reverse()
 
-        self.copedent = dict( nada = [0,0,0,0,0,0,0,0,0,0],
-                              P1   = [0,0,0,0,2,0,0,0,0,2],
-                              P2   = [0,0,1,0,0,1,0,0,0,0],
-                              P3   = [0,0,0,2,2,0,0,0,0,0],
-                              LKL  = [0,0,0,1,0,0,0,1,0,0],
-                              LKU  = [0,0,0,0,-1,0,0,0,0,-1],
-                              LKR  = [0,0,0,-1,0,0,0,-1,0,0],
-                              RKL  = [2,1,0,0,0,-2,0,0,0,0],
-                              RKR  = [0,-1,0,0,0,0,0,0,-1,0])
+        self.copedent = model.copedent
+
+        for v in self.copedent.values():
+            v.reverse()
 
     def __getitem__(self, index):
         startnote = self.tuning[index]
@@ -38,5 +90,3 @@ class E9_Neck:
         for p in self.down:
             state = map(sum, zip(state, self.copedent[p]))
         return state
-
-    

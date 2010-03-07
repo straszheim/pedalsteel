@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import sys
+reload(sys)
+print sys.setdefaultencoding('UTF-8')
 
 # sys.path += ['/home/troy/Projects/pedalsteel/pydee/pydeelib']
 # import pydee
@@ -55,6 +57,8 @@ class GraphWidget(QtGui.QGraphicsView):
         self.timerId = 0
 
         self.keymap = { '1':'P1', '2':'P2', '3':'P3',
+                        '4':'P4', '5':'P5', '6':'P6',
+                        '7':'P7', '8':'P8',
                         'y':'LKL', 'u':'LKU', 'i':'LKR',
                         'o':'RKL', 'p':'RKR'}
         
@@ -70,7 +74,7 @@ class GraphWidget(QtGui.QGraphicsView):
         self.setResizeAnchor(QtGui.QGraphicsView.AnchorViewCenter)
 
         self.neck = NeckWidget(0, 0, 1000, 150)
-        self.neck.tuning = E9_Neck()
+        self.neck.tuning = NeckModel(E9)
 
         scene.addItem(self.neck)
 
@@ -82,7 +86,7 @@ class GraphWidget(QtGui.QGraphicsView):
         #
         # pedals
         # 
-        spacing = 100
+        spacing = 50
         pedalx = 200
         pedaly = 170
 
@@ -97,7 +101,7 @@ class GraphWidget(QtGui.QGraphicsView):
 
         pedalx = 200
         pedaly = 185
-        for name in ['P1', 'P2', 'P3']:
+        for name in ['P%d' % i for i in range(1,9)]:
             gi = PedalWidget(name)
             gi.setPos(pedalx, pedaly)
             pedalx += spacing
@@ -148,7 +152,7 @@ class GraphWidget(QtGui.QGraphicsView):
             return impl
         
 
-        fnmap = { 'x' : lambda: sys.exit(1),
+        fnmap = { '!' : lambda: sys.exit(1),
                   'a' : setkey(A, self),
                   'A' : setkey(As, self),
                   'b' : setkey(B, self),
@@ -168,12 +172,12 @@ class GraphWidget(QtGui.QGraphicsView):
                   'M' : setchordtype('M', self),
                   'n' : setchordtype('m7', self),
                   'N' : setchordtype('M7', self),
-                  'h' : setchordtype('x7', self),
-                  'H' : setchordtype('x7b5', self),
+                  'x' : setchordtype('x7', self),
+                  'c' : setchordtype('x7b5', self),
                   'j' : setchordtype('m7b5', self),
                   'J' : setchordtype('d7', self),
-                  'k' : setchordtype('x7+5', self),
-                  'K' : setchordtype('x7+9', self),
+                  'X' : setchordtype('x7+5', self),
+                  'C' : setchordtype('x7+9', self),
                   }
 
         def setglobal(y):
