@@ -173,11 +173,11 @@ class GraphWidget(QtGui.QGraphicsView):
                   'n' : setchordtype('m7', self),
                   'N' : setchordtype('M7', self),
                   'x' : setchordtype('x7', self),
-                  'c' : setchordtype('x7b5', self),
+                  #'c' : setchordtype('x7b5', self),
                   'j' : setchordtype('m7b5', self),
                   'J' : setchordtype('d7', self),
                   'X' : setchordtype('x7+5', self),
-                  'C' : setchordtype('x7+9', self),
+                  #'C' : setchordtype('x7+9', self),
                   }
 
         def setglobal(y):
