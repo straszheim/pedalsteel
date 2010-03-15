@@ -47,6 +47,14 @@ class Note:
         return [self + x for x in m7b5]
 
     @property
+    def x7s5(self):
+        return [self + x for x in x7s5]
+
+    @property
+    def x7s9(self):
+        return [self + x for x in x7s9]
+
+    @property
     def d7(self):
         return [self + x for x in d7]
 
@@ -88,10 +96,18 @@ class Note:
         return n
 
     def __eq__(self, other):
+        # print "eq", self, other, "?"
+        if other == None:
+            return False
         if self.octave == None or other.octave == None:
             return self.value == other.value
         else:
             return self.octave == other.octave and self.value == other.value
+
+    def __hash__(self):
+        if self.octave == None:
+            return self.value
+        return self.octave * 12 + self.value
 
     def __str__(self):
         self.normalize()

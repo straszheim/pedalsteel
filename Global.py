@@ -37,7 +37,7 @@ pprint(letternotes)
 
 show_octave = [False]
 
-sharporflat = [sharp]
+sharporflat = [flat]
 
 displayer = [letternotes]
 
@@ -77,3 +77,8 @@ def nohighlight(x):
     return None
 
 highlight = nohighlight
+
+def setdisplay(y):
+    global displayer
+    displayer = [y]
+
