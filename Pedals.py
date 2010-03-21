@@ -14,23 +14,27 @@ class P6: __metaclass__ = PedalMeta
 class P7: __metaclass__ = PedalMeta
 class P8: __metaclass__ = PedalMeta
 
+pedal_classes = [P1, P2, P3, P4, P5, P6, P7, P8]
+
 class LKL: __metaclass__ = PedalMeta
 class LKU: __metaclass__ = PedalMeta
 class LKR: __metaclass__ = PedalMeta
 class RKL: __metaclass__ = PedalMeta
 class RKR: __metaclass__ = PedalMeta
 
+knee_classes = [LKL, LKU, LKR, RKL, RKR]
+
 import itertools
 
-pedals = [(P1,), (P2,), (P3,),
-          (P1, P2), (P2, P3)]
+pedal_combos = [(P1,), (P2,), (P3,),
+                (P1, P2), (P2, P3)]
 
-knees = [(LKL,), (LKR,),
-         (RKL,), (RKR,),
-         (LKL, RKL), (LKL, RKR),
-         (LKR, RKL), (LKR, RKR)]
+knee_combos = [(LKL,), (LKR,),
+               (RKL,), (RKR,),
+               (LKL, RKL), (LKL, RKR),
+               (LKR, RKL), (LKR, RKR)]
 
-combinations = [()] + pedals + knees + [x+y for x in pedals for y in knees]
+combinations = [()] + pedal_combos + knee_combos + [x+y for x in pedal_combos for y in knee_combos]
 
 
 

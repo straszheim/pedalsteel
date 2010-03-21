@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import pdb
 import sys
 reload(sys)
 print sys.setdefaultencoding('UTF-8')
@@ -21,7 +22,7 @@ from Neck import *
 import Chord
 from NeckWidget import NeckWidget
 from PedalWidget import PedalWidget
-
+from Pedals import *
 
 def toggle_octave():
     from Note import show_octave
@@ -56,12 +57,6 @@ class GraphWidget(QtGui.QGraphicsView):
 
         self.timerId = 0
 
-        self.keymap = { '1':'P1', '2':'P2', '3':'P3',
-                        '4':'P4', '5':'P5', '6':'P6',
-                        '7':'P7', '8':'P8',
-                        'y':'LKL', 'u':'LKU', 'i':'LKR',
-                        'o':'RKL', 'p':'RKR'}
-        
         scene = QtGui.QGraphicsScene(self)
         scene.setItemIndexMethod(QtGui.QGraphicsScene.NoIndex)
         scene.setSceneRect(-20, -50, 800, 300)
@@ -92,20 +87,22 @@ class GraphWidget(QtGui.QGraphicsView):
 
         self.pedals = {}
         pedals = self.pedals
-        for name in ['LKL', 'LKU', 'LKR', 'RKL', 'RKR']:
+        for k in knee_classes:
+            name = str(k)
             gi = PedalWidget(name)
             gi.setPos(pedalx, pedaly)
             pedalx += spacing
-            pedals[name] = gi
+            pedals[k] = gi
             scene.addItem(gi)
 
         pedalx = 200
         pedaly = 185
-        for name in ['P%d' % i for i in range(1,9)]:
+        for p in pedal_classes:
+            name = str(p)
             gi = PedalWidget(name)
             gi.setPos(pedalx, pedaly)
             pedalx += spacing
-            pedals[name] = gi
+            pedals[p] = gi
             scene.addItem(gi)
 
         g.tonic = [C]
@@ -137,8 +134,6 @@ class GraphWidget(QtGui.QGraphicsView):
     def pedtoggle(self, name):
         self.neck.tuning.toggle(name)
         self.pedals[name].toggle()
-
-
 
     def keyPressEvent(self, event):
         if event.isAutoRepeat():
@@ -193,6 +188,13 @@ class GraphWidget(QtGui.QGraphicsView):
         setkey(g.tonic[0], self)
 
         print fnmap
+
+        self.keymap = { '1': P1, '2': P2, '3': P3,
+                        '4': P4, '5': P5, '6': P6,
+                        '7': P7, '8': P8,
+                        'y': LKL, 'u': LKU, 'i': LKR,
+                        'o': RKL, 'p': RKR}
+
         for t in [event.text()]:
             if t in fnmap.keys():
                 fnmap[str(t)]()
