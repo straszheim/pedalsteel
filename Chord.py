@@ -8,6 +8,8 @@ import Interval as i
 # generate chords and exec
 #
 
+n = [i.P1]
+
 M = [i.P1, i.M3, i.P5]
 m = [i.P1, i.m3, i.P5]
 d = [i.P1, i.m3, i.d5]
@@ -23,6 +25,7 @@ d7   =  d + [i.d7]
 x7s9 =  [i.P1, i.M3, i.m7, i.s9]
 
 chord_types = {
+    'n' : n,
     'M' : M,
     'm' : m,
     'M7' : M7,

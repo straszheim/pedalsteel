@@ -32,6 +32,13 @@ def toggle_octave():
     widget.neck.update()
 
 
+def setchordtype(type, w):
+    def impl():
+        g.chordname = type
+        g.chord=[g.tonic[0] + x for x in Chord.chord_types[type]]
+        w.tonicwidget.setPlainText(g.letter(g.tonic[0]) + type)
+    return impl
+
 def setkey(key, w):
     def impl():
         g.tonic[0] = key
@@ -42,13 +49,7 @@ def setkey(key, w):
         g.highlight = myhighlight
         w.tonicwidget.setPlainText(g.letter(key) + g.chordname)
         w.update()
-    return impl
-
-def setchordtype(type, w):
-    def impl():
-        g.chordname = type
-        g.chord=[g.tonic[0] + x for x in Chord.chord_types[type]]
-        w.tonicwidget.setPlainText(g.letter(g.tonic[0]) + type)
+        setchordtype('n', w)()
     return impl
 
 class GraphWidget(QtGui.QGraphicsView):
@@ -186,8 +187,6 @@ class GraphWidget(QtGui.QGraphicsView):
         fnmap['-'] = setglobal(g.flat) 
 
         setkey(g.tonic[0], self)
-
-        print fnmap
 
         self.keymap = { '1': P1, '2': P2, '3': P3,
                         '4': P4, '5': P5, '6': P6,
