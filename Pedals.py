@@ -26,13 +26,20 @@ knee_classes = [LKL, LKU, LKR, RKL, RKR]
 
 import itertools
 
-pedal_combos = [(P1,), (P2,), (P3,),
-                (P1, P2), (P2, P3)]
+pedal_combos = [(P1,),
+                (P2,),
+                (P3,),
+                (P1, P2),
+                (P2, P3)]
 
-knee_combos = [(LKL,), (LKR,),
-               (RKL,), (RKR,),
-               (LKL, RKL), (LKL, RKR),
-               (LKR, RKL), (LKR, RKR)]
+knee_combos = [(LKL,),
+               (LKR,),
+               (RKL,),
+               (RKR,),
+               (LKL, RKL),
+               (LKL, RKR),
+               (LKR, RKL),
+               (LKR, RKR)]
 
 combinations = [()] + pedal_combos + knee_combos + [x+y for x in pedal_combos for y in knee_combos]
 

@@ -31,9 +31,9 @@ letternotes[flat] = makedict('C', 'Db', 'D', 'Eb', 'E', 'F',
                              'Gb', 'G', 'Ab', 'A', 'Bb', 'B')
 
 
-pprint(scaletones)
-pprint(solfege)
-pprint(letternotes)
+#pprint(scaletones)
+#pprint(solfege)
+#pprint(letternotes)
 
 show_octave = [False]
 

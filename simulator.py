@@ -130,7 +130,7 @@ class GraphWidget(QtGui.QGraphicsView):
         pass
 
     def enterEvent(self, event):
-        print "enterEvent!"
+        pass
 
     def pedtoggle(self, name):
         self.neck.tuning.toggle(name)
@@ -139,7 +139,6 @@ class GraphWidget(QtGui.QGraphicsView):
     def keyPressEvent(self, event):
         if event.isAutoRepeat():
             return
-        print "keyPressEvent!", event
 
         def setdtype(y):
             def impl():

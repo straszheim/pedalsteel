@@ -2,7 +2,7 @@
 
 import sys
 reload(sys)
-print sys.setdefaultencoding('UTF-8')
+sys.setdefaultencoding('UTF-8')
 
 from pprint import pprint
 
@@ -22,13 +22,14 @@ import Note as Notemodule
 from Neck import *
 import Chord
 import Pedals
-pprint(Pedals.combinations)
+
+#pprint(Pedals.combinations)
 neck = NeckModel(E9)
 
 g.setdisplay(g.scaletones)
 g.tonic[0] = E
 
-print "\n"
+print "The neck:\n"
 
 for i in range(10):
 
@@ -41,8 +42,7 @@ for i in range(10):
 
     print 
 
-print
-print
+print '-'*40
 
 def score(thingy, chord):
 
@@ -75,38 +75,29 @@ def score(thingy, chord):
     return space + deadstrings
     
             
-    
-
-
 candidates = []
 
 for combo in Pedals.combinations:
     for i in range(10,2, -1):
-        print "%2d: " % i,
+        print "Tonic on string", i, " pedals:", combo
         sn = i-1
 
         neck.allup()
         for p in combo:
             neck.toggle(p)
             
-        print combo
-
         g.tonic[0] = neck[sn][0]
 
         soughtchord = g.tonic[0].x7b5
 
-
         for n in soughtchord:
             n.octave = None
 
-        #for offset in range(sn, 0, -1):
         notes = [neck[x][0] for x in range(sn, -1, -1)]
         print notes
 
         result = ()
-        # print soughtchord
         for n in notes:
-            # print ">>", n, "?"
             if n in soughtchord:
                 result += (n,)
             else:
@@ -120,7 +111,7 @@ for combo in Pedals.combinations:
 
 candidates.sort(cmp=lambda x,y: x[0] - y[0])
 
-print "CANDIDATES:"
+print "Done searching.\n", '-'*40, "\nCandidates:"
 
 reversed = {}
 
@@ -133,14 +124,15 @@ for c in candidates:
         print "Tossing   ", c
         print "in lieu of", reversed[c[2]]
 
-pprint(reversed)
+#pprint(reversed)
 
 l = [(score,pedals,grip) for (grip,(pedals,score)) in reversed.items()]
 l.sort(cmp=lambda x,y: x[0]-y[0])
 
+print '-'*40
 for score, pedals, grip in l:
     g.tonic[0] = grip[0]
     printy = ["%-2s" % unicode(x) if x != None else '..' for x in grip]
     printy = ['..'] * (10-len(printy)) + printy
-    print "%20s   %s" % (pedals, ' '.join(printy)) 
+    print "%2d  %20s   %s" % (score, pedals, ' '.join(printy)) 
 
