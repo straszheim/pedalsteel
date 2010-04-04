@@ -88,7 +88,7 @@ for combo in Pedals.combinations:
             
         g.tonic[0] = neck[sn][0]
 
-        soughtchord = g.tonic[0].x7b5
+        soughtchord = g.tonic[0].x7s9
 
         for n in soughtchord:
             n.octave = None
@@ -121,7 +121,7 @@ for c in candidates:
     elif len(reversed[c[2]][0]) > len(c[1]):
         reversed[c[2]] = (c[1], c[0])
     else:
-        print "Tossing   ", c
+        print "\nTossing   ", c
         print "in lieu of", reversed[c[2]]
 
 #pprint(reversed)

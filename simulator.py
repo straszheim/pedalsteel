@@ -60,7 +60,7 @@ class GraphWidget(QtGui.QGraphicsView):
 
         scene = QtGui.QGraphicsScene(self)
         scene.setItemIndexMethod(QtGui.QGraphicsScene.NoIndex)
-        scene.setSceneRect(-20, -50, 800, 300)
+        scene.setSceneRect(-20, -20, 790, 225)
 
         self.setScene(scene)
         self.setCacheMode(QtGui.QGraphicsView.CacheBackground)
@@ -69,7 +69,7 @@ class GraphWidget(QtGui.QGraphicsView):
         self.setTransformationAnchor(QtGui.QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QtGui.QGraphicsView.AnchorViewCenter)
 
-        self.neck = NeckWidget(0, 0, 1000, 150)
+        self.neck = NeckWidget(0, 0, 750, 150)
         self.neck.tuning = NeckModel(E9)
 
         scene.addItem(self.neck)

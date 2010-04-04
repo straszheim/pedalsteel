@@ -121,9 +121,6 @@ class Note:
 #
 
 values_file = open("NoteValues.py", "w")
-values_file.write("print 'importing values'\n")
-
-values_file.write("print '....>', dir()\n")
 
 for value, letter in list(enumerate(letternotes[sharp][ALL])) + \
         list(enumerate(letternotes[flat][ALL])):

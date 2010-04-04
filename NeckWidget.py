@@ -21,15 +21,15 @@ class NeckWidget(QtGui.QGraphicsWidget):
         self.stringlocations = [0]*self.nstrings
         self.stringboxes = [None]*self.nstrings
 
-        ratio = 2**(1./12)
+        ratio = 2**(1.0/16)
         print "ratio=%f" % ratio
-        curlen = xsize
+        curlen = xsize * 1.5
         self.fretlocations[0] = x
 
         for i in range(1, self.nfrets+1):
             nextfret = (curlen / ratio) + x
             curlen /= ratio
-            self.fretlocations[i] = x + (xsize - curlen)
+            self.fretlocations[i] = x + ((xsize * 1.5) - curlen)
 
         for i in range(self.nstrings):
             v = 10 + (ysize-20) * i / (self.nstrings - 1)
