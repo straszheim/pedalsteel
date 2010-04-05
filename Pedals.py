@@ -1,6 +1,14 @@
 """
+>>> P1 < P2
+True
 >>> P1 > P2
+False
+>>> cmp(P1, P2)
+-1
+>>> cmp(P2, P1)
 1
+>>> cmp(P1, P1)
+0
 """
 
 class PedalMeta(type):

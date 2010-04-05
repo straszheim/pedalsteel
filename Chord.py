@@ -1,7 +1,3 @@
-#!/usr/bin/python
-
-import sys
-import Note as n
 import Interval as i
 
 #

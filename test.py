@@ -88,5 +88,5 @@ def test_globals():
     eql(letternotes[sharp][3], 'Ri')
     
 def test_pedals():
-    assert P2 < P1
+    assert P1 < P2
 

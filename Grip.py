@@ -1,7 +1,8 @@
 
 class Grip:
     """
-    >>> assert False
+    >>> print 'ayup doctest ok'
+    ayup doctest ok
     """
     def __init__(self, pedals=[], strings=[None]*10):
         self.pedals = pedals
