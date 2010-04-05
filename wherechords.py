@@ -24,10 +24,14 @@ import Chord
 import Pedals
 
 #pprint(Pedals.combinations)
-neck = NeckModel(E9)
+tuning = E9
+neck = NeckModel(tuning)
 
 g.setdisplay(g.scaletones)
 g.tonic[0] = E
+
+whichchord = sys.argv[1]
+print "Looking for", whichchord 
 
 print "The neck:\n"
 
@@ -88,7 +92,7 @@ for combo in Pedals.combinations:
             
         g.tonic[0] = neck[sn][0]
 
-        soughtchord = g.tonic[0].x7s9
+        soughtchord = getattr(g.tonic[0], whichchord)
 
         for n in soughtchord:
             n.octave = None
@@ -132,7 +136,19 @@ l.sort(cmp=lambda x,y: x[0]-y[0])
 print '-'*40
 for score, pedals, grip in l:
     g.tonic[0] = grip[0]
-    printy = ["%-2s" % unicode(x) if x != None else '..' for x in grip]
-    printy = ['..'] * (10-len(printy)) + printy
-    print "%2d  %20s   %s" % (score, pedals, ' '.join(printy)) 
+    pedline = [''] * 10
+    for p in pedals:
+        for i in range(10):
+            if tuning.copedent[p][i] != 0 and pedline[9-i] != None:
+                pedline[9-i] = "%-3s" % p
 
+    for i in range(10):
+        if pedline[i] == '':
+            pedline[i] = '...'
+
+    printy = ["%-3s" % unicode(x) if x != None else '...' for x in grip]
+    printy = ['...'] * (10-len(printy)) + printy
+    print 
+    print ' '.join(pedline), "   ", score
+    print ' '.join(printy) 
+    # print score, pedals, grip

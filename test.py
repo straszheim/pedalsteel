@@ -1,11 +1,27 @@
 #!/usr/bin/python
 
+import sys
+reload(sys)
+sys.setdefaultencoding('UTF-8')
+
 from Global import *
 from Note import *
 from Interval import *
 from Neck import *
+from Pedals import *
+from Grip import *
 
 import Note as nmod
+
+def eql(l, r):
+    if l == r:
+        return
+    else:
+        print "ERROR"
+        print "l=", l
+        print "r=", r
+        assert l == r
+        
 
 def test_notes():
     assert A == A^0
@@ -38,7 +54,7 @@ def test_notes():
 
 def test_neck():
 
-    n = E9_Neck()
+    n = NeckModel(E9)
     print n[0][0] == Fs^4
     print n[0][12] == Fs^5
     print n[9][12] == B^4
@@ -68,6 +84,9 @@ def test_chords():
 
 def test_globals():
     assert scaletones[sharp][3] == '2s'
-    assert solfege[sharp][3] == 'Ri'
-    assert letternotes[sharp][3] == 'Ri'
+    eql(solfege[sharp][3], 'Ri')
+    eql(letternotes[sharp][3], 'Ri')
     
+def test_pedals():
+    assert P2 < P1
+

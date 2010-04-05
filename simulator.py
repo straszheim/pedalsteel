@@ -60,7 +60,7 @@ class GraphWidget(QtGui.QGraphicsView):
 
         scene = QtGui.QGraphicsScene(self)
         scene.setItemIndexMethod(QtGui.QGraphicsScene.NoIndex)
-        scene.setSceneRect(-20, -20, 790, 225)
+        scene.setSceneRect(-20, -20, 790, 240)
 
         self.setScene(scene)
         self.setCacheMode(QtGui.QGraphicsView.CacheBackground)

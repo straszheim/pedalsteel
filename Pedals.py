@@ -1,10 +1,16 @@
+"""
+>>> P1 > P2
+1
+"""
+
 class PedalMeta(type):
     def __str__(cls):
         return cls.__name__
     def __repr__(cls):
         return cls.__name__
-
-
+    def __cmp__(cls, other):
+        return cmp(cls.__name__, other.__name__)
+    
 class P1: __metaclass__ = PedalMeta
 class P2: __metaclass__ = PedalMeta
 class P3: __metaclass__ = PedalMeta
@@ -29,6 +35,7 @@ import itertools
 pedal_combos = [(P1,),
                 (P2,),
                 (P3,),
+                (P4,),
                 (P1, P2),
                 (P2, P3)]
 

@@ -120,7 +120,7 @@ class Note:
 # generate notes and exec
 #
 
-values_file = open("NoteValues.py", "w")
+values_file = open("NoteValues.py.generated", "w")
 
 for value, letter in list(enumerate(letternotes[sharp][ALL])) + \
         list(enumerate(letternotes[flat][ALL])):
@@ -132,6 +132,6 @@ for value, letter in list(enumerate(letternotes[sharp][ALL])) + \
 
 values_file.close()
 
-execfile('NoteValues.py')
+execfile('NoteValues.py.generated')
 
 
