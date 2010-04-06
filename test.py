@@ -13,6 +13,8 @@ from Grip import *
 
 import Note as nmod
 
+from nose.tools import *
+
 def eql(l, r):
     if l == r:
         return
@@ -83,9 +85,9 @@ def test_chords():
     assert Ab not in A.x7
 
 def test_globals():
-    assert scaletones[sharp][3] == '2s'
-    eql(solfege[sharp][3], 'Ri')
-    eql(letternotes[sharp][3], 'Ri')
+    eq_(scaletones[sharp][3], '2s')
+    eq_(solfege[sharp][3], 'Ri')
+    eq_(letternotes[sharp][3], 'Ds')
     
 def test_pedals():
     assert P1 < P2
