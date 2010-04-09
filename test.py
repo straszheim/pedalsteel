@@ -92,3 +92,25 @@ def test_globals():
 def test_pedals():
     assert P1 < P2
 
+def test_grips():
+
+    p = [None, P1]
+    s = [None, E]
+    
+    g1 = Grip(p, s)
+    g2 = Grip(p, s)
+
+    eq_(g1, g2)
+
+    g1 = Grip([None, None], s)
+
+    assert_not_equal(g1, g2)
+    
+    assert not g1.superset(g2)
+    assert g2.superset(g1)
+
+    g1.strings = [E, F]
+    g1.pedals = [P2, P1]
+
+    assert g1.superset(g2)
+    

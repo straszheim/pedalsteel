@@ -55,6 +55,10 @@ class Note:
         return [self + x for x in x7s9]
 
     @property
+    def x7b9(self):
+        return [self + x for x in x7b9]
+
+    @property
     def d7(self):
         return [self + x for x in d7]
 

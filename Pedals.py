@@ -17,8 +17,10 @@ class PedalMeta(type):
     def __repr__(cls):
         return cls.__name__
     def __cmp__(cls, other):
+        if other == None:
+            return -1
         return cmp(cls.__name__, other.__name__)
-    
+
 class P1: __metaclass__ = PedalMeta
 class P2: __metaclass__ = PedalMeta
 class P3: __metaclass__ = PedalMeta

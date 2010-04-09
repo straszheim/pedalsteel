@@ -1,0 +1,42 @@
+#+STARTUP: hidestars
+
+* Picking patterns
+
+  * single notes 10 9 8 ... alternating thumb/middle with fingerblocking
+  * 10 9 8  9 8 7  8 7 6  pickblocking up and down
+  * skip strings 10 8 6 4 2
+  * skipping 10 8 9 7 8 6 up and down
+
+* grips
+
+** 2-string grips up and down, 1,2,3 damped strings in middle
+
+** 3-string grips up and down:
+
+   lo ->  hi
+   x - x - x
+   x - x x -
+   x x - x -
+   x - - x x
+   x x - - x
+
+* scales
+
+** chromatic scales 
+
+** major scale, tonic on string 8
+
+** major scale doublestops, tonic string 8, min bar mvmt
+
+** major scale sixths/thirds, holding P1
+*** 10, 8%LL
+*** 8%LL, 5
+  * 5, 4%LL
+
+** major scale in thirds on 
+
+*** 10,9 w/ LU
+*** 8,6  and 4,3 w/ LL,  8,6 and 7,6 w/ P2
+*** 5,4  hold P1, work LL
+*** 4,3  w/ LL
+

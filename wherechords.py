@@ -5,6 +5,8 @@ reload(sys)
 sys.setdefaultencoding('UTF-8')
 
 from pprint import pprint
+from copy import deepcopy
+from operator import and_, or_
 
 # sys.path += ['/home/troy/Projects/pedalsteel/pydee/pydeelib']
 # import pydee
@@ -22,7 +24,7 @@ import Note as Notemodule
 from Neck import *
 import Chord
 import Pedals
-
+from Grip import *
 #pprint(Pedals.combinations)
 tuning = E9
 neck = NeckModel(tuning)
@@ -118,6 +120,28 @@ candidates.sort(cmp=lambda x,y: x[0] - y[0])
 print "Done searching.\n", '-'*40, "\nCandidates:"
 
 reversed = {}
+
+def clean(l, pred):
+
+    todelete = []
+    end = len(l)
+    for x in range(len(l)):
+        for y in range(x+1, len(l)):
+            if pred(l[x], l[y]):
+                todelete += [l[y]]
+
+    cleaned = []
+    for x in l:
+        if x not in todelete:
+            cleaned += [x]
+    return cleaned
+
+grips = [Grip(p, s) for (score, p, s) in candidates]
+
+clean(grips, Grip.superset)
+
+pprint(grips)
+sys.exit(0)
 
 for c in candidates:
     if c[2] not in reversed:
