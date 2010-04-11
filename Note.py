@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys
-from Global import *
+import Global as g
 from Interval import Interval
 from Chord import *
 
@@ -115,7 +115,7 @@ class Note:
 
     def __str__(self):
         self.normalize()
-        return pretty(self)
+        return g.pretty(self)
 
     def __repr__(self):
         return str(self)
@@ -126,8 +126,8 @@ class Note:
 
 values_file = open('NoteValues.py.generated', 'w')
 
-for value, letter in list(enumerate(letternotes[sharp][ALL])) + \
-        list(enumerate(letternotes[flat][ALL])):
+for value, letter in list(enumerate(g.letternotes[g.sharp][g.ALL])) + \
+        list(enumerate(g.letternotes[g.flat][g.ALL])):
     values_file.write('%s = Note(octave=None, value=%s)\n' % (letter, value))
 
 #for octave in range(10):

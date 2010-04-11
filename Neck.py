@@ -93,3 +93,5 @@ class NeckModel:
         for p in self.down:
             state = map(sum, zip(state, self.copedent[p]))
         return state
+
+        

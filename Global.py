@@ -52,10 +52,9 @@ def pretty(n):
     s = displayer[0][sharporflat[0]][v]
     if n.octave and show_octave[0]:
         s += '^' + str(n.octave)
-    t = unicode(s)
-    t = t.replace('s', u'\u266F')
-    t = t.replace('b', u'\u266D')
-    return t
+    s = s.replace('s', u'\u266f')
+    s = s.replace('b', u'\u266d')
+    return s.encode('UTF-8')
 
 def letter(n):
     n.normalize()
@@ -63,10 +62,9 @@ def letter(n):
     if n.octave and show_octave[0]:
         s += '^' + str(n.octave)
     # print "returning %s for %d" %( s, n.value)
-    t = unicode(s)
-    t = t.replace('s', u'\u266F')
-    t = t.replace('b', u'\u266D')
-    return t
+    s = s.replace('s', u'\u266f')
+    s = s.replace('b', u'\u266d')
+    return s.encode('UTF-8')
 
 tonic = [None]
 

@@ -47,7 +47,6 @@ for i in range(10):
         print "%-4s" % neck[i][0],
 
     print 
-
 print '-'*40
 
 def score(thingy, chord):
