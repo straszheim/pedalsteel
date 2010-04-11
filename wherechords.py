@@ -25,7 +25,9 @@ from Neck import *
 import Chord
 import Pedals
 from Grip import *
+
 #pprint(Pedals.combinations)
+
 tuning = E9
 neck = NeckModel(tuning)
 
@@ -55,7 +57,6 @@ def score(thingy, chord):
     while trimmed[-1] == None:
         trimmed = trimmed[:-1]
     
-
     missing = 0
     for n in chord:
         if n not in thingy:
@@ -78,28 +79,27 @@ def score(thingy, chord):
             break
 
     return space + deadstrings
-    
             
 candidates = []
+candgrips = []
+
 
 for combo in Pedals.combinations:
-    for i in range(10,2, -1):
-        print "Tonic on string", i, " pedals:", combo
-        sn = i-1
+    for sn in range(0,8):
 
         neck.allup()
         for p in combo:
             neck.toggle(p)
             
-        g.tonic[0] = neck[sn][0]
-
+        g.tonic[0] = neck[9-sn][0]
         soughtchord = getattr(g.tonic[0], whichchord)
 
         for n in soughtchord:
             n.octave = None
 
-        notes = [neck[x][0] for x in range(sn, -1, -1)]
-        print notes
+        notes = [neck[x][0] for x in range(sn, 10)] + ([None] * (10-(10-sn)))
+        #print notes
+        assert len(notes) == 10
 
         result = ()
         for n in notes:
@@ -108,18 +108,23 @@ for combo in Pedals.combinations:
             else:
                 result += (None,)
 
-        print result
+        #print result
 
         s = score(result, soughtchord)
         if s < 1000:
             candidates += [(s, combo, result)]
+            candgrips += [(s, Grip(combo, [int(x != None) for x in result]))]
 
+        print "Tonic on string", sn, g.letter(g.tonic[0]), " pedals:", combo, " ==>", result
+
+sys.exit(0)
 candidates.sort(cmp=lambda x,y: x[0] - y[0])
 
 print "Done searching.\n", '-'*40, "\nCandidates:"
 
-reversed = {}
-
+pprint(candidates)
+# pprint(candgrips)
+# sys.exit(1)
 def clean(l, pred):
 
     todelete = []
@@ -135,12 +140,13 @@ def clean(l, pred):
             cleaned += [x]
     return cleaned
 
-grips = [Grip(p, s) for (score, p, s) in candidates]
+grips = [Grip(p, s).normalize(tuning) for (score, p, s) in candidates]
 
-clean(grips, Grip.superset)
+# clean(grips, Grip.superset)
 
 pprint(grips)
-sys.exit(0)
+
+reversed = {}
 
 for c in candidates:
     if c[2] not in reversed:
@@ -153,11 +159,11 @@ for c in candidates:
 
 #pprint(reversed)
 
-l = [(score,pedals,grip) for (grip,(pedals,score)) in reversed.items()]
-l.sort(cmp=lambda x,y: x[0]-y[0])
+#l = [(score,pedals,grip) for (grip,(pedals,score)) in reversed.items()]
+#l.sort(cmp=lambda x,y: x[0]-y[0])
 
 print '-'*40
-for score, pedals, grip in l:
+for score, pedals, grip in candidates:
     g.tonic[0] = grip[0]
     pedline = [''] * 10
     for p in pedals:
@@ -169,9 +175,9 @@ for score, pedals, grip in l:
         if pedline[i] == '':
             pedline[i] = '...'
 
-    printy = ["%-3s" % unicode(x) if x != None else '...' for x in grip]
+    printy = ["%-3s" % g.pretty(x) if x != None else '...' for x in grip]
     printy = ['...'] * (10-len(printy)) + printy
-    print 
+    print
     print ' '.join(pedline), "   ", score
-    print ' '.join(printy) 
+    print ' '.join([x.encode('UTF-8') for x in printy]) 
     # print score, pedals, grip

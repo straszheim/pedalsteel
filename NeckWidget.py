@@ -80,7 +80,7 @@ class NeckWidget(QtGui.QGraphicsWidget):
                 curbrush = makebrush(delta)
                 painter.setBrush(curbrush)
                 
-                painter.drawRect(x, self.stringlocations[index] - self.fontpixels/2 - 4,
+                painter.drawRect(x, self.stringlocations[(self.nstrings-1)-index] - self.fontpixels/2 - 4,
                                  w, 10)
 
         painter.setBrush(oldbrush)
@@ -113,6 +113,6 @@ class NeckWidget(QtGui.QGraphicsWidget):
                 dot(xloc, ycenter + self.dotsize, QtCore.Qt.blue, self.dotsize)
                 dot(xloc, ycenter - self.dotsize, QtCore.Qt.blue, self.dotsize)
             for (stringindex, yloc) in enumerate(self.stringlocations):
-                text(loc, yloc, self.tuning[stringindex][fretindex])
+                text(loc, yloc, self.tuning[9-stringindex][fretindex])
 
             prevloc = loc

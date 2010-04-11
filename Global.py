@@ -11,10 +11,10 @@ def makedict(*args):
     return d
 
 scaletones = {}
-scaletones[sharp] = makedict('1', '1s', '2', '2s', '3', '4',
-                             '4s', '5', '5s', '6', '6s', '7')
-scaletones[flat] = makedict('1', '2b', '2', '3b', '3', '4', 
-                            '5b', '5', '6b', '6', '7b', '7')
+scaletones[sharp] = makedict('1', '#1', '2', '#2', '3', '4',
+                             '#4', '5', '#5', '6', '#6', '7')
+scaletones[flat] = makedict('1', 'b2', '2', 'b3', '3', '4', 
+                            'b5', '5', 'b6', '6', 'b7', '7')
 
 solfege = {}
 solfege[sharp] = makedict('Do', 'Di', 'Re', 'Ri', 'Mi', 'Fa',
@@ -52,9 +52,9 @@ def pretty(n):
     s = displayer[0][sharporflat[0]][v]
     if n.octave and show_octave[0]:
         s += '^' + str(n.octave)
-    s = s.replace('s', u'\u266f')
-    s = s.replace('b', u'\u266d')
-    return s.encode('UTF-8')
+#    s = s.replace('s', u'\u266f')
+#    s = s.replace('b', u'\u266d')
+    return s#.encode('UTF-8')
 
 def letter(n):
     n.normalize()
@@ -62,9 +62,9 @@ def letter(n):
     if n.octave and show_octave[0]:
         s += '^' + str(n.octave)
     # print "returning %s for %d" %( s, n.value)
-    s = s.replace('s', u'\u266f')
-    s = s.replace('b', u'\u266d')
-    return s.encode('UTF-8')
+#    s = s.replace('s', u'\u266f')
+#    s = s.replace('b', u'\u266d')
+    return s#.encode('UTF-8')
 
 tonic = [None]
 

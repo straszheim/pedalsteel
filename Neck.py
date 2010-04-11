@@ -67,14 +67,8 @@ class NeckModel:
 
     def __init__(self, model):
         self.down = set([])
-        # these were Gs
         self.tuning = model.tuning[:]
-        self.tuning.reverse()
-
         self.copedent = deepcopy(model.copedent)
-
-        for v in self.copedent.values():
-            v.reverse()
 
     def __getitem__(self, index):
         startnote = self.tuning[index]

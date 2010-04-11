@@ -85,7 +85,7 @@ def test_chords():
     assert Ab not in A.x7
 
 def test_globals():
-    eq_(g.scaletones[g.sharp][3], '2s')
+    eq_(g.scaletones[g.sharp][3], '#2')
     eq_(g.solfege[g.sharp][3], 'Ri')
     eq_(g.letternotes[g.sharp][3], 'Ds')
     
@@ -135,3 +135,10 @@ def test_unicode_display():
     print p.encode('UTF-8')
     print As
     print As
+
+def test_neckmodel():
+    n = NeckModel(E9)
+
+    eq_(n[0][0], B)
+    eq_(n[0][1], C)
+    eq_(n[2][0], E)
