@@ -5,6 +5,33 @@ from Pedals import *
 
 nada = [0, 0, 0, 0, 0,  0, 0, 0, 0, 0]
 
+class NeckModel:
+
+    def __init__(self, model):
+        self.down = set([])
+        self.tuning = model.tuning[:]
+        self.copedent = deepcopy(model.copedent)
+
+    def __getitem__(self, index):
+        startnote = self.tuning[index]
+        delta = sum([self.copedent[x][index] for x in self.down])
+        return [self.tuning[index]+i+delta for i in range(25)]
+        
+    def toggle(self, pedal):
+        if pedal in self.down:
+            self.down.remove(pedal)
+        else:
+            self.down.add(pedal)
+            
+    def allup(self):
+        self.down = set([])
+
+    def pedalstate(self):
+        state = [0]*len(self.tuning)
+        for p in self.down:
+            state = map(sum, zip(state, self.copedent[p]))
+        return state
+
 class E9:
     tuning = [B^2, D^3, E^3,  Fs^3, Gs^3,
               B^3, E^4, Gs^4, Ds^4, Fs^4]
@@ -63,32 +90,5 @@ class C6:
                  RKL : [ 0, 0, 0, 0, 0,  0, 0,-1, 0, 0], 
                  RKR : [ 0, 0, 0, 0, 0,  0, 0, 0, 0, 0] }
 
-class NeckModel:
-
-    def __init__(self, model):
-        self.down = set([])
-        self.tuning = model.tuning[:]
-        self.copedent = deepcopy(model.copedent)
-
-    def __getitem__(self, index):
-        startnote = self.tuning[index]
-        delta = sum([self.copedent[x][index] for x in self.down])
-        return [self.tuning[index]+i+delta for i in range(25)]
-        
-    def toggle(self, pedal):
-
-        if pedal in self.down:
-            self.down.remove(pedal)
-        else:
-            self.down.add(pedal)
-            
-    def allup(self):
-        self.down = set([])
-
-    def pedalstate(self):
-        state = [0]*len(self.tuning)
-        for p in self.down:
-            state = map(sum, zip(state, self.copedent[p]))
-        return state
 
         

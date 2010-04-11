@@ -105,19 +105,19 @@ def test_grips():
     
     assert not g1.superset_of(g2)
     g2.strings = [0,1,1]
-    assert g2.superset_of(g1)
+    assert not g2.superset_of(g1)
     assert not g1.superset_of(g2)
 
 def test_grip_normalize():
     print E9.tuning
-    g = Grip([P1, P2], [1,0,0,0,0, 1,0,0,0,0], E9)
+    g = Grip([P1, P2], [1,0,0,0,0, 1,0,0,0,0], NeckModel(E9))
     h = g.normalize()
     print "normalized:", h
     assert P2 not in h.pedals
     print h.pedals
     assert h.pedals == set([P1])
 
-    g = Grip([], [1,1,1,1,1, 1,1,1,1,1], E9)
+    g = Grip([], [1,1,1,1,1, 1,1,1,1,1], NeckModel(E9))
     h = g.normalize()
     assert len(h.pedals) == 0
 
@@ -125,11 +125,34 @@ def test_grip_normalize():
     h = g.normalize()
     assert len(h.pedals) == 0
 
-    g = Grip([P2, P3, P4, RKL, RKR], [0,0,0,0,0, 0,0,0,1,1], E9)
+    g = Grip([P2, P3, P4, RKL, RKR], [0,0,0,0,0, 0,0,0,1,1], NeckModel(E9))
     h = g.normalize()
     assert h.pedals == set([RKL, RKR])
 
+def test_grip_str():
+    g = Grip([], [1, 1, 1, 0, 1,   1, 1, 0, 0, 0], tonicstring=2, neck=NeckModel(E9))
+    s = str(g)
+    print s
+
+def test_grip_superset():
+    g = Grip([], [1, 0, 0])
+    h = Grip([], [1, 0, 1])
+    assert g != h
+    assert h.superset_of(g)
+    assert not g.superset_of(h)
+    h = Grip([], [1, 0, 0])
+    assert g == h
     
+    g = Grip([], [0, 0, 0])
+    h = Grip([], [0, 0, 1])
+    assert h.superset_of(g)
+    assert not g.superset_of(h)
+
+    g = Grip([P1], [0, 0, 0])
+    h = Grip([], [0, 0, 1])
+    assert not h.superset_of(g)
+    assert not g.superset_of(h)
+
 def test_unicode_display():
     p = g.pretty(As)
     print p.encode('UTF-8')
@@ -155,3 +178,20 @@ def test_neckmodel():
     n.toggle(LKL)
     eq_(n[2][3], G)
     
+def test_thin():
+    import operator
+    def betterthan(l, r):
+        return l[0] == r[0] and len(l) > len(r)
+
+    l = ["abcd", "a", "ab", "abc", "b", "bc"]
+    r = g.thin(l, betterthan, lambda x: x)
+
+    eq_(r,["abcd", "bc"])
+
+    l = ['a1', 'b1', 'c1', 'a', 'd', 'b']
+    r = g.thin(l, betterthan)
+    eq_(set(r), set(['a1', 'b1', 'c1', 'd']))
+    
+def test_uniqify():
+    l = [(9,1), (9,2), (8,2), (9,3)]
+    eq_(g.uniqify(l, lambda x: x[1]), [(9,1), (9,2), (9,3)])

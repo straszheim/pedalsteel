@@ -28,8 +28,7 @@ from Grip import *
 
 #pprint(Pedals.combinations)
 
-tuning = E9
-neck = NeckModel(tuning)
+neck = NeckModel(E9)
 
 g.setdisplay(g.scaletones)
 g.tonic[0] = E
@@ -98,7 +97,7 @@ for combo in Pedals.combinations:
             n.octave = None
 
         notes = [neck[x][0] for x in range(10)]
-        print "notes=", notes
+        #print "notes=", notes
         assert len(notes) == 10
 
         result = ()
@@ -109,15 +108,31 @@ for combo in Pedals.combinations:
                 result += (None,)
 
         s = score(result, soughtchord)
-        print result, " scored ", s, " relative to", soughtchord
+        # print result, " scored ", s, " relative to", soughtchord
         if s < 1000:
             print "Tonic on string", tonicstring, g.tonic[0], " pedals:", combo, " ==>", result
             print "sought:", soughtchord
             candidates += [(s, combo, result, tonicstring)]
-            candgrips += [(s, Grip(combo, [int(x != None) for x in result]), E9)]
+            candgrips += [(s,
+                           Grip(combo,
+                                [int(x != None) for x in result],
+                                neck,
+                                tonicstring).normalize())]
 
+
+neck.allup()
 # sys.exit(0)
-candidates.sort(cmp=lambda x,y: x[0] - y[0])
+# candidates.sort(cmp=lambda x,y: x[0] - y[0])
+
+candgrips = g.uniqify(candgrips, lambda x: x[1])
+
+candgrips = g.thin(candgrips, Grip.superset_of, lambda x: x[1])
+
+for c in candgrips:
+    print c[0],'\n', str(c[1]), '\n'
+
+sys.exit(1)
+redundant_grips = []
 
 print "Done searching.\n", '-'*40, "\nCandidates:"
 
@@ -157,7 +172,7 @@ for score, pedals, grip, tonicstring in candidates:
     pedline = [''] * 10
     for p in pedals:
         for i in range(10):
-            if tuning.copedent[p][i] != 0 and pedline[i] != None:
+            if neck.copedent[p][i] != 0 and pedline[i] != None:
                 pedline[i] = "%-3s" % p
 
     for i in range(10):

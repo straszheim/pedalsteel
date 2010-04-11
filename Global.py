@@ -80,3 +80,35 @@ def setdisplay(y):
     global displayer
     displayer = [y]
 
+
+def thin(l, predicate, sel = lambda x: x):
+    to_delete = []
+    for i in range(len(l)):
+        for j in range(i+1, len(l)):
+            if predicate(sel(l[i]), sel(l[j])):
+                to_delete += [j]
+            if predicate(sel(l[j]), sel(l[i])):
+                to_delete += [i]
+
+    r = []
+    print "to_delete = ", to_delete
+    for i in range(len(l)):
+        if i not in to_delete:
+            r += [l[i]]
+    return r
+
+def uniqify(seq, idfun=None): 
+    # order preserving
+    if idfun is None:
+        def idfun(x): return x
+    seen = []
+    result = []
+    for item in seq:
+        marker = idfun(item)
+        # in old Python versions:
+        # if seen.has_key(marker)
+        # but in new ones:
+        if marker in seen: continue
+        seen += [marker]
+        result.append(item)
+    return result
