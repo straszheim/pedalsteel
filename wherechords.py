@@ -39,12 +39,12 @@ print "Looking for", whichchord
 
 print "The neck:\n"
 
-for i in range(10):
+for i in range(9,-1,-1):
 
     print " %-5s" % g.letter(neck[i][0]),
 
     for tstring in range(10):
-        g.tonic[0] = neck[abs(tstring-9)][0]
+        g.tonic[0] = neck[tstring][0]
 
         print "%-4s" % neck[i][0],
 
@@ -54,8 +54,8 @@ print '-'*40
 def score(thingy, chord):
 
     trimmed = list(thingy)
-    while trimmed[-1] == None:
-        trimmed = trimmed[:-1]
+    while trimmed[0] == None:
+        trimmed = trimmed[1:]
     
     missing = 0
     for n in chord:
@@ -83,22 +83,22 @@ def score(thingy, chord):
 candidates = []
 candgrips = []
 
+g.setdisplay(g.scaletones)
 
 for combo in Pedals.combinations:
-    for sn in range(0,8):
-
+    for tonicstring in range(0,8):
         neck.allup()
         for p in combo:
             neck.toggle(p)
             
-        g.tonic[0] = neck[9-sn][0]
+        g.tonic[0] = neck[tonicstring][0]
         soughtchord = getattr(g.tonic[0], whichchord)
 
         for n in soughtchord:
             n.octave = None
 
-        notes = [neck[x][0] for x in range(sn, 10)] + ([None] * (10-(10-sn)))
-        #print notes
+        notes = [neck[x][0] for x in range(10)]
+        print "notes=", notes
         assert len(notes) == 10
 
         result = ()
@@ -108,16 +108,15 @@ for combo in Pedals.combinations:
             else:
                 result += (None,)
 
-        #print result
-
         s = score(result, soughtchord)
+        print result, " scored ", s, " relative to", soughtchord
         if s < 1000:
-            candidates += [(s, combo, result)]
+            print "Tonic on string", tonicstring, g.tonic[0], " pedals:", combo, " ==>", result
+            print "sought:", soughtchord
+            candidates += [(s, combo, result, tonicstring)]
             candgrips += [(s, Grip(combo, [int(x != None) for x in result]))]
 
-        print "Tonic on string", sn, g.letter(g.tonic[0]), " pedals:", combo, " ==>", result
-
-sys.exit(0)
+# sys.exit(0)
 candidates.sort(cmp=lambda x,y: x[0] - y[0])
 
 print "Done searching.\n", '-'*40, "\nCandidates:"
@@ -140,44 +139,37 @@ def clean(l, pred):
             cleaned += [x]
     return cleaned
 
-grips = [Grip(p, s).normalize(tuning) for (score, p, s) in candidates]
+# grips = [Grip(p, s).normalize(tuning) for (score, p, s, tonicstring) in candidates]
 
 # clean(grips, Grip.superset)
 
-pprint(grips)
+# pprint(grips)
 
-reversed = {}
+# pprint(reversed)
 
-for c in candidates:
-    if c[2] not in reversed:
-        reversed[c[2]] = (c[1], c[0])
-    elif len(reversed[c[2]][0]) > len(c[1]):
-        reversed[c[2]] = (c[1], c[0])
-    else:
-        print "\nTossing   ", c
-        print "in lieu of", reversed[c[2]]
-
-#pprint(reversed)
-
-#l = [(score,pedals,grip) for (grip,(pedals,score)) in reversed.items()]
-#l.sort(cmp=lambda x,y: x[0]-y[0])
+# l = [(score,pedals,grip) for (grip,(pedals,score)) in reversed.items()]
+# l.sort(cmp=lambda x,y: x[0]-y[0])
 
 print '-'*40
-for score, pedals, grip in candidates:
-    g.tonic[0] = grip[0]
+for score, pedals, grip, tonicstring in candidates:
+    print
+
     pedline = [''] * 10
     for p in pedals:
         for i in range(10):
-            if tuning.copedent[p][i] != 0 and pedline[9-i] != None:
-                pedline[9-i] = "%-3s" % p
+            if tuning.copedent[p][i] != 0 and pedline[i] != None:
+                pedline[i] = "%-3s" % p
 
     for i in range(10):
         if pedline[i] == '':
             pedline[i] = '...'
 
+    g.tonic[0] = grip[tonicstring]
+    print "tonic %s, on string %d" % (g.letter(g.tonic[0]), tonicstring)
+
     printy = ["%-3s" % g.pretty(x) if x != None else '...' for x in grip]
     printy = ['...'] * (10-len(printy)) + printy
-    print
+    print "tonicstring=", tonicstring
     print ' '.join(pedline), "   ", score
     print ' '.join([x.encode('UTF-8') for x in printy]) 
     # print score, pedals, grip

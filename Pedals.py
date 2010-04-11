@@ -60,7 +60,7 @@ knee_combos = [(LKL,),
 
 combinations = [()] + pedal_combos + knee_combos + [x+y for x in pedal_combos for y in knee_combos]
 
-
+# FIXME: remove incompatible pedal/knee combinations, some overlap
 
 
 

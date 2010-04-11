@@ -142,3 +142,16 @@ def test_neckmodel():
     eq_(n[0][0], B)
     eq_(n[0][1], C)
     eq_(n[2][0], E)
+
+    n.toggle(P1)
+    eq_(n[0][0], Cs)
+    eq_(n[0][3], E)
+    n.toggle(P1)
+    eq_(n[0][0], B)
+
+    eq_(n[2][3], G)
+    n.toggle(LKL)
+    eq_(n[2][3], Gs)
+    n.toggle(LKL)
+    eq_(n[2][3], G)
+    
