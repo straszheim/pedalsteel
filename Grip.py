@@ -4,21 +4,22 @@ class Grip:
     >>> print 'ayup doctest ok'
     ayup doctest ok
     """
-    def __init__(self, pedals=[], strings=[0]*10):
+    def __init__(self, pedals=[], strings=[0]*10, neck=None):
         self.pedals = set(pedals)
         self.strings = strings
+        self.neck = neck
         print "Grip:", self.pedals, self.strings
         
     def __eq__(self, rhs):
         return self.pedals == rhs.pedals and self.strings == rhs.strings
 
-    def normalize(self, neck):
-        assert len(neck.tuning) == len(self.strings), \
-               "%d strings in tuning, %d in grip" % (len(neck.tuning), len(self.strings))
+    def normalize(self):
+        assert len(self.neck.tuning) == len(self.strings), \
+               "%d strings in tuning, %d in grip" % (len(self.neck.tuning), len(self.strings))
         newgrip = Grip(self.pedals, self.strings)
         for pedal in self.pedals:
             useless = True
-            for p, s in zip(neck.copedent[pedal], self.strings):
+            for p, s in zip(self.neck.copedent[pedal], self.strings):
                 if s and (p != 0):
                     useless = False
             if useless:

@@ -110,23 +110,23 @@ def test_grips():
 
 def test_grip_normalize():
     print E9.tuning
-    g = Grip([P1, P2], [1,0,0,0,0, 1,0,0,0,0])
-    h = g.normalize(E9)
+    g = Grip([P1, P2], [1,0,0,0,0, 1,0,0,0,0], E9)
+    h = g.normalize()
     print "normalized:", h
     assert P2 not in h.pedals
     print h.pedals
     assert h.pedals == set([P1])
 
-    g = Grip([], [1,1,1,1,1, 1,1,1,1,1])
-    h = g.normalize(E9)
+    g = Grip([], [1,1,1,1,1, 1,1,1,1,1], E9)
+    h = g.normalize()
     assert len(h.pedals) == 0
 
     g.pedals = set([P5])
-    h = g.normalize(E9)
+    h = g.normalize()
     assert len(h.pedals) == 0
 
-    g = Grip([P2, P3, P4, RKL, RKR], [0,0,0,0,0, 0,0,0,1,1])
-    h = g.normalize(E9)
+    g = Grip([P2, P3, P4, RKL, RKR], [0,0,0,0,0, 0,0,0,1,1], E9)
+    h = g.normalize()
     assert h.pedals == set([RKL, RKR])
 
     

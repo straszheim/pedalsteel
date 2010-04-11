@@ -114,7 +114,7 @@ for combo in Pedals.combinations:
             print "Tonic on string", tonicstring, g.tonic[0], " pedals:", combo, " ==>", result
             print "sought:", soughtchord
             candidates += [(s, combo, result, tonicstring)]
-            candgrips += [(s, Grip(combo, [int(x != None) for x in result]))]
+            candgrips += [(s, Grip(combo, [int(x != None) for x in result]), E9)]
 
 # sys.exit(0)
 candidates.sort(cmp=lambda x,y: x[0] - y[0])
