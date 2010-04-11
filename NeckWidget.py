@@ -98,7 +98,7 @@ class NeckWidget(QtGui.QGraphicsWidget):
                 painter.setPen(clr)
             else:
                 painter.setPen(QtCore.Qt.black)
-            painter.drawText(x, y, g.pretty(s))
+            painter.drawText(x, y, unicode(g.pretty(s)))
 
         #
         #  Fretboard dots
