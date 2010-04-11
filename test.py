@@ -94,26 +94,41 @@ def test_pedals():
 
 def test_grips():
 
-    p = [None, P1]
-    s = [None, E]
-    
-    g1 = Grip(p, s)
-    g2 = Grip(p, s)
+    g1 = Grip([None, P1], [0,0,1])
+    g2 = Grip([None, P1], [0,0,1])
 
-    return
     eq_(g1, g2)
 
-    g1 = Grip([None, None], s)
+    g2 = Grip([None, None], [0,0,1])
 
     assert_not_equal(g1, g2)
     
-    assert not g1.superset(g2)
-    assert g2.superset(g1)
+    assert not g1.superset_of(g2)
+    g2.strings = [0,1,1]
+    assert g2.superset_of(g1)
+    assert not g1.superset_of(g2)
 
-    g1.strings = [E, F]
-    g1.pedals = [P2, P1]
+def test_grip_normalize():
+    print E9.tuning
+    g = Grip([P1, P2], [1,0,0,0,0, 1,0,0,0,0])
+    h = g.normalize(E9)
+    print "normalized:", h
+    assert P2 not in h.pedals
+    print h.pedals
+    assert h.pedals == set([P1])
 
-    assert g1.superset(g2)
+    g = Grip([], [1,1,1,1,1, 1,1,1,1,1])
+    h = g.normalize(E9)
+    assert len(h.pedals) == 0
+
+    g.pedals = set([P5])
+    h = g.normalize(E9)
+    assert len(h.pedals) == 0
+
+    g = Grip([P2, P3, P4, RKL, RKR], [0,0,0,0,0, 0,0,0,1,1])
+    h = g.normalize(E9)
+    assert h.pedals == set([RKL, RKR])
+
     
 def test_unicode_display():
     p = g.pretty(As)

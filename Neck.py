@@ -1,12 +1,14 @@
 
+from copy import deepcopy
 from Note import *
 from Pedals import *
 
 nada = [0, 0, 0, 0, 0,  0, 0, 0, 0, 0]
 
 class E9:
-    tuning = [B^2, D^3,  E^3,  Fs^3, Gs^3,
-              B^3, E^4,  Gs^4,  Ds^4, Fs^4],
+    tuning = [B^2, D^3, E^3,  Fs^3, Gs^3,
+              B^3, E^4, Gs^4, Ds^4, Fs^4]
+    
     copedent = { P1   : [+2, 0, 0, 0, 0, +2, 0, 0, 0, 0], 
                  P2   : [ 0, 0, 0, 0,+1,  0, 0,+1, 0, 0], 
                  P3   : [ 0, 0, 0, 0, 0, +2,+2, 0, 0, 0], 
@@ -25,7 +27,8 @@ class E9:
 
 class E9_minor:
     tuning = [B^2, D^3,  E^3,  Fs^3, G^3,
-              B^3, E^4,  G^4,  Ds^4, Fs^4],
+              B^3, E^4,  G^4,  Ds^4, Fs^4]
+
     copedent = dict(P1   = [+1, 0, 0, 0, 0, +1, 0, 0, 0, 0], 
                     P2   = [ 0, 0, 0, 0,+2,  0, 0,+2, 0, 0], 
                     P3   = [ 0, 0, 0, 0, 0, +1,+2, 0, 0, 0], 
@@ -43,7 +46,8 @@ class E9_minor:
 
 class C6:
     tuning = [C^2,  F^2,  A^3,  C^3,  E^3,
-              G^3,  A^4,  C^4,  E^4,  D^4],
+              G^3,  A^4,  C^4,  E^4,  D^4]
+
     copedent = { P1 :  nada,
                  P2 :  nada,
                  P3 :  nada,
@@ -64,11 +68,10 @@ class NeckModel:
     def __init__(self, model):
         self.down = set([])
         # these were Gs
-        self.tuning = model.tuning[0]
-        print "TUNING=", model.tuning
+        self.tuning = model.tuning[:]
         self.tuning.reverse()
 
-        self.copedent = model.copedent
+        self.copedent = deepcopy(model.copedent)
 
         for v in self.copedent.values():
             v.reverse()

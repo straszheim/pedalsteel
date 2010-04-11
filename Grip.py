@@ -4,24 +4,35 @@ class Grip:
     >>> print 'ayup doctest ok'
     ayup doctest ok
     """
-    def __init__(self, pedals=[], strings=[None]*10):
+    def __init__(self, pedals=[], strings=[0]*10):
         self.pedals = set(pedals)
         self.strings = strings
+        print "Grip:", self.pedals, self.strings
+        
+    def __eq__(self, rhs):
+        return self.pedals == rhs.pedals and self.strings == rhs.strings
 
-    def __cmp__(self, rhs):
-        c = cmp(self.pedals, rhs.pedals)
-        if c != 0:
-            return c
-        return cmp(self.strings, rhs.strings)
-
-    def superset(self, rhs):
+    def normalize(self, neck):
+        assert(len(neck.tuning) == len(self.strings))
+        newgrip = Grip(self.pedals, self.strings)
+        for pedal in self.pedals:
+            useless = True
+            for p, s in zip(neck.copedent[pedal], self.strings):
+                if s and (p != 0):
+                    useless = False
+            if useless:
+                newgrip.pedals.discard(pedal)
+        return newgrip
+    
+    def superset_of(self, rhs):
         print "superset %s <=> %s" % (self, rhs),
-        for mine, theirs in zip(self.pedals, rhs.pedals):
-            if mine == None and theirs != None:
-                print "NO"
+        ss = False
+        for mine, theirs in zip(self.strings, rhs.strings):
+            if mine == 1 and theirs == 0:
+                ss = True
+            if mine == 0 and theirs == 1:
                 return False
-        print "YES"
-        return True
+        return ss
     
     def __str__(self):
         return str(self.pedals) + " " + str(self.strings)
