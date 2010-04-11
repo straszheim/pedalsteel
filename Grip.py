@@ -13,7 +13,8 @@ class Grip:
         return self.pedals == rhs.pedals and self.strings == rhs.strings
 
     def normalize(self, neck):
-        assert(len(neck.tuning) == len(self.strings))
+        assert len(neck.tuning) == len(self.strings), \
+               "%d strings in tuning, %d in grip" % (len(neck.tuning), len(self.strings))
         newgrip = Grip(self.pedals, self.strings)
         for pedal in self.pedals:
             useless = True
