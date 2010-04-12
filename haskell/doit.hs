@@ -4,12 +4,12 @@ f x = x * 4
 x = [1,2,3]
 
 class (Enum n) => Noteable n where
-      (<<) :: n -> n -> bool
+      (<<) :: n -> n -> Bool
       (++)  :: n -> n -> [n]
       --      x << y = fromenum x < fromenum y
 
-data Letternote = c | cs | d | ds | e | f | fs | g | gs | a | as | b 
-                  deriving (show, enum)
+data Letternote = C | Cs | D | Ds | E | F | Fs | G | Gs | A | As | B 
+                  deriving (Show, Enum)
 
 instance Noteable Letternote where
          x << y = fromEnum x < fromEnum y
