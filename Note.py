@@ -6,6 +6,9 @@ from Interval import Interval
 from Chord import *
 
 class Note:
+    
+    __metaclass__ = NoteMeta
+    
     def __init__(self, octave, value):
         self.octave = octave
         self.value = value
@@ -17,50 +20,6 @@ class Note:
             n.value = 11
             n.octave -= 1
         return n
-
-    @property
-    def M(self):
-        return [self + x for x in M]
-
-    @property
-    def m(self):
-        return [self + x for x in m]
-
-    @property
-    def M7(self):
-        return [self + x for x in M7]
-
-    @property
-    def x7(self):
-        return [self + x for x in x7]
-
-    @property
-    def m7(self):
-        return [self + x for x in m7]
-
-    @property
-    def x7b5(self):
-        return [self + x for x in x7b5]
-
-    @property
-    def m7b5(self):
-        return [self + x for x in m7b5]
-
-    @property
-    def x7s5(self):
-        return [self + x for x in x7s5]
-
-    @property
-    def x7s9(self):
-        return [self + x for x in x7s9]
-
-    @property
-    def x7b9(self):
-        return [self + x for x in x7b9]
-
-    @property
-    def d7(self):
-        return [self + x for x in d7]
 
     def normalize(self):
         while self.value >= 12:

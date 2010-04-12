@@ -64,6 +64,7 @@ def test_neck():
 
 def test_chords():
 
+    print C.M7
     assert C in C.M7
     assert E in C.M7
     assert G in C.M7
@@ -75,8 +76,6 @@ def test_chords():
     assert Bb in C.m7
     assert B not in C.m7
 
-    assert all([x in C.m7b5 for x in m7b5])
-    
     assert A in A.x7
     assert Cs in A.x7
     assert E in A.x7
@@ -125,9 +124,9 @@ def test_grip_normalize():
     h = g.normalize()
     assert len(h.pedals) == 0
 
-    g = Grip([P2, P3, P4, RKL, RKR], [0,0,0,0,0, 0,0,0,1,1], NeckModel(E9))
+    g = Grip([P2, P3, P4, RL, RR], [0,0,0,0,0, 0,0,0,1,1], NeckModel(E9))
     h = g.normalize()
-    assert h.pedals == set([RKL, RKR])
+    assert h.pedals == set([RL, RR])
 
 def test_grip_str():
     g = Grip([], [1, 1, 1, 0, 1,   1, 1, 0, 0, 0], tonicstring=2, neck=NeckModel(E9))
@@ -173,9 +172,9 @@ def test_neckmodel():
     eq_(n[0][0], B)
 
     eq_(n[2][3], G)
-    n.toggle(LKL)
+    n.toggle(LL)
     eq_(n[2][3], Gs)
-    n.toggle(LKL)
+    n.toggle(LL)
     eq_(n[2][3], G)
     
 def test_thin():
@@ -195,3 +194,9 @@ def test_thin():
 def test_uniqify():
     l = [(9,1), (9,2), (8,2), (9,3)]
     eq_(g.uniqify(l, lambda x: x[1]), [(9,1), (9,2), (9,3)])
+
+def test_notemeta():
+
+    print Ds.x7s9alt
+
+    
