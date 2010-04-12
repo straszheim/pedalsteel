@@ -129,7 +129,7 @@ candgrips = g.uniqify(candgrips, lambda x: x[1])
 candgrips = g.thin(candgrips, Grip.superset_of, lambda x: x[1])
 
 for c in candgrips:
-    print c[0],'\n', str(c[1]), '\n'
+    print str(c[1]), '\n'
 
 sys.exit(1)
 redundant_grips = []

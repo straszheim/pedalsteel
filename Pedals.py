@@ -32,13 +32,13 @@ class P8: __metaclass__ = PedalMeta
 
 pedal_classes = [P1, P2, P3, P4, P5, P6, P7, P8]
 
-class LKL: __metaclass__ = PedalMeta
-class LKU: __metaclass__ = PedalMeta
-class LKR: __metaclass__ = PedalMeta
-class RKL: __metaclass__ = PedalMeta
-class RKR: __metaclass__ = PedalMeta
+class LL: __metaclass__ = PedalMeta
+class LU: __metaclass__ = PedalMeta
+class LR: __metaclass__ = PedalMeta
+class RL: __metaclass__ = PedalMeta
+class RR: __metaclass__ = PedalMeta
 
-knee_classes = [LKL, LKU, LKR, RKL, RKR]
+knee_classes = [LL, LU, LR, RL, RR]
 
 import itertools
 
@@ -49,14 +49,14 @@ pedal_combos = [(P1,),
                 (P1, P2),
                 (P2, P3)]
 
-knee_combos = [(LKL,),
-               (LKR,),
-               (RKL,),
-               (RKR,),
-               (LKL, RKL),
-               (LKL, RKR),
-               (LKR, RKL),
-               (LKR, RKR)]
+knee_combos = [(LL,),
+               (LR,),
+               (RL,),
+               (RR,),
+               (LL, RL),
+               (LL, RR),
+               (LR, RL),
+               (LR, RR)]
 
 combinations = [()] + pedal_combos + knee_combos + [x+y for x in pedal_combos for y in knee_combos]
 

@@ -41,29 +41,25 @@ class Grip:
     def __str__(self):
 
         self.neck.allup()
-        pedline = [''] * 10
+        pedline = ['  '] * 10
         for p in self.pedals:
             self.neck.toggle(p)
             for i in range(10):
                 if self.neck.copedent[p][i] != 0 and pedline[i] != None:
-                    pedline[i] = "%-3s" % p
-
-        for i in range(10):
-            if pedline[i] == '':
-                pedline[i] = '...'
+                    pedline[i] = "%-2s" % p
 
         g.tonic[0] = self.neck[self.tonicstring][0]
-        sr = "tonic %s, on string %d\n" % (g.letter(g.tonic[0]), self.tonicstring)
+        sr = ''
 
         printy = []
         for j, s in enumerate(self.strings):
             if s == 0:
-                printy += ['...']
+                printy += ['. ']
             else:
-                printy += ["%-3s" % g.pretty(self.neck[j][0])]
+                printy += ["%-2s" % g.pretty(self.neck[j][0])]
 
         sr += ' '.join(pedline) + '\n'
-        sr += ' '.join([x.encode('UTF-8') for x in printy]) + '\n'
+        sr += ' '.join([x.encode('UTF-8') for x in printy])
         return sr
 
     def __repr__(self):

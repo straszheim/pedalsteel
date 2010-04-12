@@ -20,6 +20,7 @@ m7b5 =  d + [i.m7]
 d7   =  d + [i.d7]
 x7s9 =  [i.P1, i.M3, i.m7, i.s9]
 x7b9 =  [i.P1, i.M3, i.m7, i.m9]
+x7s9alt =  [i.M3, i.m7, i.s9]
 
 chord_types = {
     'n' : n,
@@ -34,6 +35,7 @@ chord_types = {
     'd7' : d7,
     'x7+9' : x7s9,
     'x7b9' : x7b9
+    'x7s9alt' : x7s9alt
     }
 
 

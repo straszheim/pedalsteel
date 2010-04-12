@@ -190,8 +190,8 @@ class GraphWidget(QtGui.QGraphicsView):
         self.keymap = { '1': P1, '2': P2, '3': P3,
                         '4': P4, '5': P5, '6': P6,
                         '7': P7, '8': P8,
-                        'y': LKL, 'u': LKU, 'i': LKR,
-                        'o': RKL, 'p': RKR}
+                        'y': LL, 'u': LU, 'i': LR,
+                        'o': RL, 'p': RR}
 
         for t in [event.text()]:
             if t in fnmap.keys():
