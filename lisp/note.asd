@@ -1,15 +1,13 @@
 ;;;; -*- Mode: Lisp; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 
-(defpackage #:note-asd
-  (:use :cl :asdf))
+(format t "NOTE ASD ******************************")
 
-(in-package :note-asd)
-
-(defsystem note
+(asdf:defsystem note
   :name "note"
   :version "0.0.0"
   :maintainer "troy d. straszheim"
   :description "notes and stuff"
   :serial t
-  :components ((:file "note")))
+  :components ((:file "lisp-unit")
+	       (:file "note")))
 

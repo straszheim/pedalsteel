@@ -2,4 +2,5 @@
 ._*
 *.pyc
 \#*\#
+*.fasl
 NoteValues.py.generated

@@ -1,5 +1,3 @@
-;;;-*- Mode: Lisp; Package: LISP-UNIT -*-
-
 #|
 Copyright (c) 2004-2005 Christopher K. Riesbeck
 

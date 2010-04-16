@@ -1,0 +1,18 @@
+(format t "******************* tests.lisp *****************~%")
+(use-package :lisp-unit)
+(use-package :note)
+
+(lisp-unit:define-test notes ()
+		       (format t "hoooooah!~%")
+		       (assert-equal (value E4) 4)
+  (assert-equal (value B) 11)
+  (assert-equal (as-letter B) "B")
+  (assert-equal (as-letter B+4) "B+4")
+  (let ((*sharpflat* 'flat))
+    (assert-equal (format nil "~S" D-7) "D-7")
+    (assert-equal (as-letter B-) "B-")
+    )
+  (assert-equal (format nil "~S" D-6) "C+6")
+  )
+
+(lisp-unit:run-tests)
