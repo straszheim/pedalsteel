@@ -1,9 +1,15 @@
 (format t "************ interval.lisp **************~%")
 
-(defpackage :interval
-  (:use :cl :asdf :note)
-  (:export +intervals+ :plus)
-  )
+(defmacro without-package-variance-warnings (&body body)
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (handler-bind (#+sbcl(sb-int:package-at-variance #'muffle-warning))
+       ,@body)))
+
+(without-package-variance-warnings
+  (defpackage :interval
+    (:use :cl :asdf :note)
+    (:export +intervals+ :plus)
+    ))
 
 (in-package :interval)
 

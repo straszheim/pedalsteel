@@ -1,13 +1,19 @@
 (format t "******************** NOTE.LISP ************************~%")
 
-(defpackage :note
-  (:use :cl :asdf)
-  (:export :sayhi :as-letter :*sharpflat*
-	   :note
-	   :value :octave :accidental :natural :sharp :flat :+LETTER-VALUES+
-	   :eek
-	   )
-  )
+(defmacro without-package-variance-warnings (&body body)
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (handler-bind (#+sbcl(sb-int:package-at-variance #'muffle-warning))
+       ,@body)))
+
+(without-package-variance-warnings
+    (defpackage :note
+      (:use :cl :asdf)
+      (:export :sayhi :as-letter :*sharpflat*
+	       :note
+	       :value :octave :accidental :natural :sharp :flat :+LETTER-VALUES+
+	       :eek
+	       )
+      ))
 
 (in-package :note)
 
