@@ -10,5 +10,6 @@
 	       (:file "lisp-unit")
 	       (:file "note")
 	       (:file "interval")
+	       (:file "chord")
 	       (:file "tests")))
 
