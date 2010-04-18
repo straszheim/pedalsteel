@@ -1,9 +1,12 @@
-
 (format t "******************** NOTE.LISP ************************~%")
 
-(defpackage #:note
+(defpackage :note
   (:use :cl :asdf)
-  (:export #:sayhi)
+  (:export :sayhi :as-letter :*sharpflat*
+	   :note
+	   :value :octave :accidental :natural :sharp :flat :+LETTER-VALUES+
+	   :eek
+	   )
   )
 
 (in-package :note)
@@ -11,17 +14,17 @@
 (defparameter *sharpflat* 'sharp)
 (defparameter *tonic* nil)
 (defparameter +LETTER-VALUES+
-  '((B+ . C) 
-    (C+ . D-) 
-    (D  . D) 
-    (D+ . E-) 
-    (E  . F-) 
-    (E+ . F) 
-    (F+ . G-) 
-    (G  . G) 
-    (G+ . A-) 
-    (A  . A) 
-    (A+ . B-) 
+  '((B+ . C)
+    (C+ . D-)
+    (D  . D)
+    (D+ . E-)
+    (E  . F-)
+    (E+ . F)
+    (F+ . G-)
+    (G  . G)
+    (G+ . A-)
+    (A  . A)
+    (A+ . B-)
     (B  . C-)))
 
 (defun as-letter (n)
@@ -59,20 +62,32 @@
      do
        (if (octave n)
 	   (incf (octave n)))
-       (decf (value n) 12)))
+       (decf (value n) 12))
+  (loop 
+     while (< (value n) 0)
+     do
+       (incf (value n) 12)
+       (if (octave n) (decf (octave n)))))
 
 (defmethod print-object ((n note) s)
   (write-string (as-letter n) s))
 
 (defun makenote (note value acc)
   (eval `(defparameter ,note (make-instance 'note :value ,value :octave nil :accidental (quote ,acc))))
+  (export note)
   (dotimes (i 10)
-    (let ((name (format nil "~S~D" note i)))
-      (eval `(defparameter ,(read-from-string name) 
+    (let* ((name (format nil "~S~D" note i))
+	   (sym (read-from-string name)))
+
+      (eval `(defparameter ,sym
 	     (make-instance 'note 
 			    :value ,value 
 			    :octave ,i 
-			    :accidental (quote ,acc)))))))
+			    :accidental (quote ,acc))))
+      (export sym)
+      )))
+
+
 
 (let ((x 0))
   (dolist (pitch '(((B +) (C =))
@@ -98,5 +113,11 @@
       ))
     (incf x)))
 
+
+(defgeneric eek (l r))
+(defmethod eek ((l note) (r note))
+	   (and (eql (value l) (value r))
+		(eql (accidental l) (accidental r))
+		(eql (octave l) (octave r))))
 
 
