@@ -423,5 +423,3 @@ For more information, see lisp-unit.html.
        (subsetp l1 l2 :test test)
        (subsetp l2 l1 :test test)))
 
-
-(provide "lisp-unit")
